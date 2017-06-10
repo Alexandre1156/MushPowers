@@ -1,0 +1,16 @@
+[
+{
+  "modid": "mush",
+  "name": "MushPowers",
+  "description": "Add new mushrooms with different power in the game",
+  "version": "0.1.0",
+  "mcversion": "1.11.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Alexandre1156"],
+  "credits": "MushPowers by Alexandre1156, an original idea by ModIdeaPoster",
+  "logoFile": "MushPowersLogo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]

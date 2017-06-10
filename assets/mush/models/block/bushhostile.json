@@ -1,0 +1,6 @@
+{
+	"parent": "block/cross",
+	"textures": {
+		"cross": "mush:blocks/bushs/bushhostile"
+	}
+}
