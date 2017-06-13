@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 
 import fr.alexandre1156.mushpowers.MushPowers;
 import fr.alexandre1156.mushpowers.bushs.BushMush;
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.proxy.CommonProxy;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -32,6 +33,7 @@ public class TileEntityMushPowersPowerInjector extends TileEntity implements ICa
 	private boolean consumeFinishedDown;
 	private ItemStack[] smeltItems;
 	private ItemStack[] smeltResult;
+	private boolean desactivedItem;
 
 	public TileEntityMushPowersPowerInjector() {
 		this.cooldownUp = 0;
@@ -113,6 +115,10 @@ public class TileEntityMushPowersPowerInjector extends TileEntity implements ICa
 	
 	public int getCooldownDown() {
 		return cooldownDown;
+	}
+	
+	public boolean isDesactivedItem() {
+		return desactivedItem;
 	}
 	
 	public boolean canBeSmelted(ItemStack is){
@@ -243,12 +249,18 @@ public class TileEntityMushPowersPowerInjector extends TileEntity implements ICa
 
 	@Override
 	public void func_73660_a() {
-		if(!this.handler.getStackInSlot(1).func_190926_b() && !this.handler.getStackInSlot(4).func_190926_b() && this.handler.getStackInSlot(3).func_190916_E() < 64 && !this.isConsumingDown && (this.handler.getStackInSlot(3).func_190926_b() ||this.handler.getStackInSlot(3).func_77969_a(this.smeltResult(this.handler.getStackInSlot(1))))) {
+		//System.out.println(!this.handler.getStackInSlot(1).isEmpty()+" - "+(!MushConfig.isMushPowersDesactived(this.handler.getStackInSlot(1).getItem()))+" - "+(!this.handler.getStackInSlot(4).isEmpty())+" - "+(this.handler.getStackInSlot(3).getCount() < 64)+" - "+(!this.isConsumingDown)+" - ");
+		if(!this.handler.getStackInSlot(1).func_190926_b() && !MushConfig.isMushPowersDesactived(this.handler.getStackInSlot(1).func_77973_b()) && !this.handler.getStackInSlot(4).func_190926_b() && this.handler.getStackInSlot(3).func_190916_E() < 64 && !this.isConsumingDown && (this.handler.getStackInSlot(3).func_190926_b() || this.handler.getStackInSlot(3).func_77969_a(this.smeltResult(this.handler.getStackInSlot(1))))) {
 			this.isConsumingDown = true;
 		}else if(this.isConsumingDown && (this.handler.getStackInSlot(1).func_190926_b() || this.handler.getStackInSlot(4).func_190926_b() || this.handler.getStackInSlot(3).func_190916_E() >= 64)) { 
 			this.isConsumingDown = false;
 			this.cooldownDown = 0;
 		}
+		//System.out.println(MushConfig.isMushPowersDesactived(this.handler.getStackInSlot(1).getItem())+" - "+this.handler.getStackInSlot(1).getItem().getUnlocalizedName());
+		if(!this.handler.getStackInSlot(1).func_190926_b() && MushConfig.isMushPowersDesactived(this.handler.getStackInSlot(1).func_77973_b()))
+			this.desactivedItem = true;
+		else
+			this.desactivedItem = false;
 		if (this.isConsumingUp) {
 			if (this.getCooldownUp() >= 200) {
 				this.consumeFinishedUp = true;

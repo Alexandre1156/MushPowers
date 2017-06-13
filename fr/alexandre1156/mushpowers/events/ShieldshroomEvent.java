@@ -2,6 +2,7 @@ package fr.alexandre1156.mushpowers.events;
 
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
@@ -15,13 +16,15 @@ public class ShieldshroomEvent extends ShroomEvent {
 			EntityPlayer p = (EntityPlayer) entLiv;
 			IPlayerMush mush = entLiv.getCapability(PlayerMushProvider.MUSH_CAP, null);
 			if(mush.isShieldActive()){
-				float shieldTaken = amount / 4;
+				float shieldTaken = amount / (100 / MushConfig.damageAbsordPercentShieldshroom);
+				System.out.println(shieldTaken+" ( "+amount);
 				if(mush.getShieldDamage()-shieldTaken < 0){
 					shieldTaken = mush.getShieldDamage();
 					mush.setShieldDamageAbsorb(0f);
 				} else
 					mush.setShieldDamageAbsorb(mush.getShieldDamage()-shieldTaken);
 				p.func_146105_b(new TextComponentTranslation("shieldshroom.damagetaken.message", shieldTaken), true);
+				System.out.println(amount+" "+shieldTaken);
 				return (amount - shieldTaken);
 			}
 		}

@@ -143,7 +143,7 @@ public class EventHandler {
 	public void livingHurt(LivingHurtEvent e){
 		for(ShroomEvent se : this.shrooms) {
 			float newAmount = se.onLivingHurt(e.getEntityLiving(), e.getSource(), e.getAmount());
-			if(newAmount > 0) e.setAmount(newAmount);
+			if(newAmount >= 0) e.setAmount(newAmount);
 		}
 	}
 	

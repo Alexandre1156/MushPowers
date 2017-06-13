@@ -4,6 +4,7 @@ import fr.alexandre1156.mushpowers.Electrocution;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -65,7 +66,7 @@ public class ElectricshroomEvent extends ShroomEvent {
 				else if(mush.getCooldown(MainMushPowers.ELECTRIC) == 2700)
 					p.func_146105_b(new TextComponentTranslation("eletric.time.start", mush.getCooldown(MainMushPowers.ELECTRIC)), true);
 				if(mush.getCooldown(MainMushPowers.ELECTRIC) <= 0) {
-					mush.setCooldown(MainMushPowers.ELECTRIC, (short) 18000);
+					mush.setCooldown(MainMushPowers.ELECTRIC, (short) MushConfig.cooldownElectric);
 					mush.setElectric(false);
 					PlayerMushProvider.syncCapabilities(p);
 					return;

@@ -1,8 +1,10 @@
 package fr.alexandre1156.mushpowers.proxy;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.collect.Lists;
+import com.mojang.realmsclient.gui.ChatFormatting;
 
 import fr.alexandre1156.mushpowers.Reference;
 import fr.alexandre1156.mushpowers.bushs.BlockBushChicken;
@@ -25,6 +27,7 @@ import fr.alexandre1156.mushpowers.capabilities.PlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushStorage;
 import fr.alexandre1156.mushpowers.capabilities.RegenCap;
 import fr.alexandre1156.mushpowers.capabilities.RegenStorage;
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.events.ChickenshroomEvent;
 import fr.alexandre1156.mushpowers.events.ElectricshroomEvent;
 import fr.alexandre1156.mushpowers.events.EventHandler;
@@ -53,9 +56,11 @@ import fr.alexandre1156.mushpowers.items.shrooms.ZombieawayShroom;
 import fr.alexandre1156.mushpowers.mppi.BlockMushPowersPowerInjector;
 import fr.alexandre1156.mushpowers.mppi.TileEntityMushPowersPowerInjector;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -67,9 +72,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class CommonProxy {
 	
 	public static Block blockMPPI;
-	public static BushMush bushSquidMush;
-	public static BushMush bushChickenMush;
-	public static BushMush bushCursedMush;
+	public static BushMush bushSquidshroom;
+	public static BushMush bushChickenshroom;
+	public static BushMush bushCursedshroom;
 	public static BushMush bushFlyshroom;
 	public static BushMush bushGhostshroom;
 	public static BushMush bushHostileshroom;
@@ -106,6 +111,7 @@ public class CommonProxy {
 		CapabilityManager.INSTANCE.register(IPlayerMush.class, new PlayerMushStorage(), PlayerMush.class);
 		CapabilityManager.INSTANCE.register(IRegen.class, new RegenStorage(), RegenCap.class);
 		MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+		MinecraftForge.EVENT_BUS.register(MushConfig.class);
 		//MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(eventHandler = new EventHandler());
 		//MinecraftForge.EVENT_BUS.register(new EventTrigger());
@@ -126,9 +132,9 @@ public class CommonProxy {
 		itemLowershroom = new Lowershroom();
 		
 		blockMPPI = new BlockMushPowersPowerInjector();
-		bushSquidMush = new BlockBushSquid();
-		bushChickenMush = new BlockBushChicken();
-		bushCursedMush = new BlockBushCursed();
+		bushSquidshroom = new BlockBushSquid();
+		bushChickenshroom = new BlockBushChicken();
+		bushCursedshroom = new BlockBushCursed();
 		bushFlyshroom = new BlockBushFly();
 		bushGhostshroom = new BlockBushGhost();
 		bushHostileshroom = new BlockBushHostile();
@@ -167,9 +173,9 @@ public class CommonProxy {
 	
 	public void register(){
 		this.registerBlock(blockMPPI);
-		this.registerBlock(bushSquidMush);
-		this.registerBlock(bushChickenMush);
-		this.registerBlock(bushCursedMush);
+		this.registerBlock(bushSquidshroom);
+		this.registerBlock(bushChickenshroom);
+		this.registerBlock(bushCursedshroom);
 		this.registerBlock(bushFlyshroom);
 		this.registerBlock(bushGhostshroom);
 		this.registerBlock(bushElectricshroom);
@@ -197,7 +203,14 @@ public class CommonProxy {
 	
 	private void registerBlock(Block block){
 		GameRegistry.register(block);
-		Item itemBlock = new ItemBlock(block).setRegistryName(block.getRegistryName());
+		Item itemBlock = new ItemBlock(block){
+			@Override
+			public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+				if(MushConfig.isMushPowersDesactived(this))
+					tooltip.add(ChatFormatting.RED+"THIS SHROOM IS DESACTIVED");
+			}
+		};
+		itemBlock.setRegistryName(block.getRegistryName());
 		GameRegistry.register(itemBlock);
 		this.itemsMod.add(itemBlock);
 		if(block instanceof BushMush)

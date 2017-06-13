@@ -3,6 +3,7 @@ package fr.alexandre1156.mushpowers.events;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,7 +35,7 @@ public class FlyshroomEvent extends ShroomEvent {
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
 			if(mush.getCooldown(MainMushPowers.FLY) <= 0 && mush.isFlying()){
 				mush.setFly(false);
-				mush.setCooldown(MainMushPowers.FLY, (short) 1200);
+				mush.setCooldown(MainMushPowers.FLY, (short) MushConfig.cooldownFly);
 				PlayerMushProvider.syncCapabilities(p);
 				return true;
 			}

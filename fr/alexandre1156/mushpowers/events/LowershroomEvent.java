@@ -2,14 +2,13 @@ package fr.alexandre1156.mushpowers.events;
 
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerEnchantment;
 import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public class LowershroomEvent extends ShroomEvent {
 	
@@ -33,36 +32,6 @@ public class LowershroomEvent extends ShroomEvent {
 	}
 	
 	@Override
-	protected void onPlayerOpenContainer(Container container, EntityPlayer p) {
-//		IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-//		if(container instanceof ContainerEnchantment && mush.isRepairCostLower()) {
-//			ContainerEnchantment containerEnch = (ContainerEnchantment) container;
-//			for(int level : containerEnch.enchantLevels){
-//				System.out.println(level);
-//			}
-//		}
-//			this.player = p;
-//		else
-//			this.player = null;
-//		if(container instanceof ContainerRepair){
-//			ContainerRepair containerRepair = (ContainerRepair) container;
-//			this.lastMaximumCost = containerRepair.maximumCost;
-////			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-////			if(mush.isRepairCostLower()){
-////				containerRepair.maximumCost = (int) (containerRepair.maximumCost * 0.75);
-////				if(containerRepair.maximumCost <= 0)
-////					containerRepair.maximumCost = 1;
-////			}
-//		}
-	}
-	
-	@Override
-	protected int onEnchantementLevelSet(int enchantRow, ItemStack item, int level, World world, int power, int originalLevel) {
-		
-		return super.onEnchantementLevelSet(enchantRow, item, level, world, power, originalLevel);
-	}
-	
-	@Override
 	protected void onLivingUpdate(Entity ent, EntityLivingBase entLiv) {
 		if(entLiv instanceof EntityPlayer) {
 			EntityPlayer p = (EntityPlayer) entLiv;
@@ -77,7 +46,7 @@ public class LowershroomEvent extends ShroomEvent {
 						this.originalCost = false;
 						this.lastMaximumCost = 0;
 					} if(this.originalCost){
-						container.field_82854_e = (int) (this.lastMaximumCost * 0.75);
+						container.field_82854_e = (int) (this.lastMaximumCost * ((100 - MushConfig.percentLowershroom) / 100));
 						if(container.field_82854_e <= 0)
 							container.field_82854_e = 1;
 					}
@@ -100,7 +69,7 @@ public class LowershroomEvent extends ShroomEvent {
 					for(int i = 0; i < container.field_75167_g.length; i++){
 						if(container.field_75167_g[i] > 0){
 							if(!this.originalLevel) {
-								this.lastLevel[i] = (int) (container.field_75167_g[i] * 0.75);
+								this.lastLevel[i] = (int) (container.field_75167_g[i] * ((100 - MushConfig.percentLowershroom) / 100));
 								if(this.lastLevel[i] <= 0)
 									this.lastLevel[i] = 1;
 							}

@@ -3,6 +3,7 @@ package fr.alexandre1156.mushpowers.events;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,7 +55,7 @@ public class ChickenshroomEvent extends ShroomEvent {
 				else if(mush.getCooldown(MainMushPowers.CHICKEN) == 600 || mush.getCooldown(MainMushPowers.CHICKEN) == 200 || mush.getCooldown(MainMushPowers.CHICKEN) == 180 || mush.getCooldown(MainMushPowers.CHICKEN) == 160 || mush.getCooldown(MainMushPowers.CHICKEN) == 140 || mush.getCooldown(MainMushPowers.CHICKEN) == 120 || mush.getCooldown(MainMushPowers.CHICKEN) == 100 || mush.getCooldown(MainMushPowers.CHICKEN) == 80 || mush.getCooldown(MainMushPowers.CHICKEN) == 60 || mush.getCooldown(MainMushPowers.CHICKEN) == 40 || mush.getCooldown(MainMushPowers.CHICKEN) == 20)
 					p.func_146105_b(new TextComponentTranslation("chicken.time.left.sec", (mush.getCooldown(MainMushPowers.CHICKEN)/20)), true);
 				if(mush.getCooldown(MainMushPowers.CHICKEN) <= 0) {
-					mush.setCooldown(MainMushPowers.CHICKEN, (short) 3600);
+					mush.setCooldown(MainMushPowers.CHICKEN, (short) MushConfig.cooldownChicken);
 					mush.setChicken(false);
 					PlayerMushProvider.syncCapabilities(p);
 					return;

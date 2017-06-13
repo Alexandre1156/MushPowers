@@ -1,9 +1,12 @@
 package fr.alexandre1156.mushpowers.mppi;
 
+import java.awt.Color;
+
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
@@ -56,6 +59,11 @@ public class GuiMushPowersPowerInjector extends GuiContainer {
 			this.func_146283_a(Lists.newArrayList(this.te.getCooldownDown()*100/1200+"%"), 69, 69);
 		if(mouseX >= (this.field_147003_i+80) && mouseX < (this.field_147003_i+102) && mouseY > (this.field_147009_r+15) && mouseY < (this.field_147009_r+35))
 			this.func_146283_a(Lists.newArrayList(this.te.getCooldownUp()*100/200+"%"), 69, 33);
+		if(this.te.isDesactivedItem()){
+			RenderHelper.func_74518_a();
+			this.func_73731_b(field_146289_q, "DESACTIVED SHROOM", 20, 40, Color.red.getRGB());
+			RenderHelper.func_74519_b();
+		}
 	}
 
 }

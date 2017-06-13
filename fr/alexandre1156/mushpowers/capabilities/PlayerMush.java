@@ -1,5 +1,7 @@
 package fr.alexandre1156.mushpowers.capabilities;
 
+import fr.alexandre1156.mushpowers.config.MushConfig;
+
 public class PlayerMush implements IPlayerMush{
 
 	private boolean squid;
@@ -46,7 +48,7 @@ public class PlayerMush implements IPlayerMush{
 	
 	@Override
 	public boolean isPizzaEaten(){
-		return this.shroomEaten > 0 && this.shroomEaten <= 3;
+		return this.shroomEaten > 0 && this.shroomEaten <= MushConfig.foodCountPizzashroom;
 	}
 
 	@Override

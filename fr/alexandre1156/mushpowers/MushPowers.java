@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.network.PacketCapabilitiesMushPowers;
 import fr.alexandre1156.mushpowers.network.PacketGhostPlayer;
 import fr.alexandre1156.mushpowers.network.PacketGhostPlayersList;
@@ -17,7 +18,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -29,13 +29,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, guiFactory = Reference.GUI_FACTORY)
+@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, guiFactory = Reference.GUI_FACTORY, updateJSON = "https://github.com/Alexandre1156/MushPowers/blob/master/Update.json")
 public class MushPowers {
 
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
 	public static CommonProxy proxy;
 	public static SimpleNetworkWrapper network;
-	public static Configuration config;
 	public static ArrayList<String> cursedShroomViewers;
 	//public static int mushBiomeID;
 	private HashMap<String, Boolean> squidPlayers;
@@ -49,8 +48,9 @@ public class MushPowers {
 		proxy.preInit(event);
 		this.squidPlayers = Maps.newHashMap();
 		this.ghostPlayers = Maps.newHashMap();
-		config = new Configuration(event.getSuggestedConfigurationFile());
-		this.syncConfig();
+		MushConfig.config = new Configuration(event.getSuggestedConfigurationFile());
+		MushConfig.config.load();
+		MushConfig.syncConfig();
 //		RenderingRegistry.registerEntityRenderingHandler(EntityPlayer.class, new IRenderFactory() {
 //
 //			@Override
@@ -120,14 +120,14 @@ public class MushPowers {
 	
 	public static void syncConfig() {
 		try {
-			config.load();
-			Property viewers = config.get(Configuration.CATEGORY_GENERAL, "Can See Cursed Shroom", new String[]{"PlayerName"}, "Players who are warned if they have a fake Regenshroom in their hands.");
+			//config.load();
+			//Property viewers = config.get(Configuration.CATEGORY_GENERAL, "Can See Cursed Shroom", new String[]{"PlayerName"}, "Players who are warned if they have a fake Regenshroom in their hands.");
 			//Property biomeMushID = config.get(Configuration.CATEGORY_GENERAL, "BiomeMushPowersID", 255, "ID of the biome MushPowers. Change it if it have a conflit with an other biome ID.");
 			//mushBiomeID = biomeMushID.getInt();
 			cursedShroomViewers = Lists.newArrayList(); 
 //			String[] viewersSeparate = viewers.getString().split(",");
-			for(int i = 0; i < viewers.getStringList().length; i++)
-				cursedShroomViewers.add(viewers.getStringList()[i]);
+//			for(int i = 0; i < viewers.getStringList().length; i++)
+//				cursedShroomViewers.add(viewers.getStringList()[i]);
 		} catch(Exception e){
 			e.printStackTrace();
 		}

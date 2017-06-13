@@ -2,6 +2,7 @@ package fr.alexandre1156.mushpowers.capabilities;
 
 import fr.alexandre1156.mushpowers.MushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.network.PacketCapabilitiesMushPowers;
 import fr.alexandre1156.mushpowers.network.PacketGhostPlayer;
 import fr.alexandre1156.mushpowers.network.PacketSquidPlayer;
@@ -42,21 +43,21 @@ public class PlayerMushProvider implements ICapabilitySerializable<NBTBase>{
 	
 	public static void resetOtherMainMushPower(EntityPlayer p, MainMushPowers power){
 		IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-		if(mush.isChicken() && power != MainMushPowers.CHICKEN) { mush.setChicken(false); mush.setCooldown(MainMushPowers.CHICKEN, (short) 3600);}
+		if(mush.isChicken() && power != MainMushPowers.CHICKEN) { mush.setChicken(false); mush.setCooldown(MainMushPowers.CHICKEN, (short) MushConfig.cooldownChicken);}
 		if(mush.isGhost() && power != MainMushPowers.GHOST) { 
 			mush.setGhost(false); 
-			mush.setCooldown(MainMushPowers.GHOST, (short) 2700);
+			mush.setCooldown(MainMushPowers.GHOST, (short) MushConfig.cooldownGhost);
 			sendGhostPacket(p, false);
 		}
-		if(mush.isHostile() && power != MainMushPowers.HOSTILE) { mush.setHostile(false); mush.setCooldown(MainMushPowers.HOSTILE, (short) 6000);}
+		if(mush.isHostile() && power != MainMushPowers.HOSTILE) { mush.setHostile(false); mush.setCooldown(MainMushPowers.HOSTILE, (short) MushConfig.cooldownHostile);}
 		if(mush.isSquid() && power != MainMushPowers.SQUID) { 
 			mush.setSquid(false); 
 			mush.setSquidAir(6000); 
-			mush.setCooldown(MainMushPowers.SQUID, (short) 12000);
+			mush.setCooldown(MainMushPowers.SQUID, (short) MushConfig.cooldownSquid);
 			sendSquidPacket(p, false);
 		}
-		if(mush.isZombieAway() && power != MainMushPowers.ZOMBIEAWAY) { mush.setZombieAway(false); mush.setCooldown(MainMushPowers.ZOMBIEAWAY, (short) 6000);}
-		if(mush.isElectric() && power != MainMushPowers.ELECTRIC) {mush.setElectric(false); mush.setCooldown(MainMushPowers.ELECTRIC, (short) 18000);}
+		if(mush.isZombieAway() && power != MainMushPowers.ZOMBIEAWAY) { mush.setZombieAway(false); mush.setCooldown(MainMushPowers.ZOMBIEAWAY, (short) MushConfig.cooldownZombieAway);}
+		if(mush.isElectric() && power != MainMushPowers.ELECTRIC) {mush.setElectric(false); mush.setCooldown(MainMushPowers.ELECTRIC, (short) MushConfig.cooldownElectric);}
 		syncCapabilities(p);
 	}
 	
@@ -71,22 +72,22 @@ public class PlayerMushProvider implements ICapabilitySerializable<NBTBase>{
 		IPlayerMush mush = player.getCapability(PlayerMushProvider.MUSH_CAP, null);
 		mush.setSquid(false);
 		mush.setSquidAir(300);
-		mush.setCooldown(MainMushPowers.SQUID, (short) 6000);
-		mush.setCooldown(MainMushPowers.ZOMBIEAWAY, (short) 6000);
-		mush.setCooldown(MainMushPowers.HOSTILE, (short) 6000);
+		mush.setCooldown(MainMushPowers.SQUID, (short) MushConfig.cooldownSquid);
+		mush.setCooldown(MainMushPowers.ZOMBIEAWAY, (short) MushConfig.cooldownZombieAway);
+		mush.setCooldown(MainMushPowers.HOSTILE, (short) MushConfig.cooldownHostile);
 		mush.setShroomCount((byte) 0);
 		mush.setZombieAway(false);
 		mush.setHostile(false);
 		mush.setChicken(false);
-		mush.setCooldown(MainMushPowers.CHICKEN, (short) 3600);
+		mush.setCooldown(MainMushPowers.CHICKEN, (short) MushConfig.cooldownChicken);
 		mush.setGhost(false);
-		mush.setCooldown(MainMushPowers.GHOST, (short) 2700);
+		mush.setCooldown(MainMushPowers.GHOST, (short) MushConfig.cooldownGhost);
 		mush.setElectric(false);
-		mush.setCooldown(MainMushPowers.ELECTRIC, (short) 18000);
+		mush.setCooldown(MainMushPowers.ELECTRIC, (short) MushConfig.cooldownElectric);
 		mush.setShieldDamageAbsorb((byte) 0);
 		if(!isMilk) {
 			mush.setFly(false);
-			mush.setCooldown(MainMushPowers.FLY, (short) 1200); 
+			mush.setCooldown(MainMushPowers.FLY, (short) MushConfig.cooldownFly); 
 		}
 		mush.setLowerRepairCost((byte) 0);
 		syncCapabilities(player);

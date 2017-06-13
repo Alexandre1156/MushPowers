@@ -50,7 +50,7 @@ public abstract class ShroomEvent {
 
 	protected boolean onLivingEntityFall(Entity ent, EntityLivingBase entLiv, float distance, float damageMultiplier){return false;}
 
-	protected float onLivingHurt(EntityLivingBase entLiv, DamageSource source, float amount) {return 0f;}
+	protected float onLivingHurt(EntityLivingBase entLiv, DamageSource source, float amount) {return -1f;}
 
 	protected boolean onLivingDeath(EntityLivingBase entLiv, DamageSource source) {return false;}
 

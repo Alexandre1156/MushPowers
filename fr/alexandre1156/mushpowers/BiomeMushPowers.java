@@ -58,13 +58,13 @@ public class BiomeMushPowers extends Biome {
 					int i8 = e.getRand().nextInt(16) + 8;
 					int l11 = e.getRand().nextInt(16) + 8;
 					BlockPos blockpos2 = e.getWorld().func_175645_m(e.getPos().func_177982_a(i8, 0, l11));
-					this.generateMushshroomPower(e.getWorld(), e.getRand(), blockpos2, CommonProxy.bushChickenMush);
+					this.generateMushshroomPower(e.getWorld(), e.getRand(), blockpos2, CommonProxy.bushChickenshroom);
 					break;
 				case 1:
 					int i = e.getRand().nextInt(16) + 8;
 					int l = e.getRand().nextInt(16) + 8;
 					BlockPos blockpos = e.getWorld().func_175645_m(e.getPos().func_177982_a(i, 0, l));
-					this.generateMushshroomPower(e.getWorld(), e.getRand(), blockpos, CommonProxy.bushCursedMush);
+					this.generateMushshroomPower(e.getWorld(), e.getRand(), blockpos, CommonProxy.bushCursedshroom);
 					break;
 				case 2:
 					int i1 = e.getRand().nextInt(16) + 8;
@@ -118,7 +118,7 @@ public class BiomeMushPowers extends Biome {
 					int i10 = e.getRand().nextInt(16) + 8;
 					int l10 = e.getRand().nextInt(16) + 8;
 					BlockPos blockpos11 = e.getWorld().func_175645_m(e.getPos().func_177982_a(i10, 0, l10));
-					this.generateMushshroomPower(e.getWorld(), e.getRand(), blockpos11, CommonProxy.bushSquidMush);
+					this.generateMushshroomPower(e.getWorld(), e.getRand(), blockpos11, CommonProxy.bushSquidshroom);
 					break;
 				case 11:
 					int i13 = e.getRand().nextInt(16) + 8;

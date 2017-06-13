@@ -9,6 +9,7 @@ import fr.alexandre1156.mushpowers.MushPowers;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.network.PacketGhostPlayersList;
 import fr.alexandre1156.mushpowers.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
@@ -130,7 +131,7 @@ public class GhostshroomEvent extends ShroomEvent {
 				else if(mush.getCooldown(MainMushPowers.GHOST) == 2700)
 					p.func_146105_b(new TextComponentTranslation("ghost.time.start", mush.getCooldown(MainMushPowers.GHOST)), true);
 				if(mush.getCooldown(MainMushPowers.GHOST) <= 0) {
-					mush.setCooldown(MainMushPowers.GHOST, (short) 2700);
+					mush.setCooldown(MainMushPowers.GHOST, (short) MushConfig.cooldownGhost);
 					mush.setGhost(false);
 					PlayerMushProvider.sendGhostPacket(p, false);
 					PlayerMushProvider.syncCapabilities(p);

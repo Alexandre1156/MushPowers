@@ -8,6 +8,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 
 import fr.alexandre1156.mushpowers.Reference;
 import fr.alexandre1156.mushpowers.capabilities.RegenProvider;
+import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
@@ -46,10 +47,14 @@ public class Cursedshroom extends ItemFood {
 	@Override
 	public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		tooltip.add(ChatFormatting.WHITE+"Adds 3 negatives effects with random amplifier and duration when eat.\nShift + Left Click to transform to a Bad Regenshroom.");
+		if(MushConfig.isMushPowersDesactived(this))
+			tooltip.add(ChatFormatting.RED+"THIS SHROOM IS DESACTIVED");
 	}
 	
 	@Override
 	public ActionResult<ItemStack> func_77659_a(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+		if(MushConfig.isMushPowersDesactived(this))
+			return new ActionResult(EnumActionResult.FAIL, playerIn.func_184586_b(handIn));
 		if(Keyboard.isKeyDown(Minecraft.func_71410_x().field_71474_y.field_74311_E.func_151463_i())){
 			ItemStack itemstack = playerIn.func_184586_b(handIn);
 			ItemStack regenshroom = new ItemStack(CommonProxy.itemRegenshroom, itemstack.func_190916_E());

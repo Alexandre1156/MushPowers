@@ -5,6 +5,7 @@ import fr.alexandre1156.mushpowers.mppi.ContainerMushPowersPowerInjector;
 import fr.alexandre1156.mushpowers.mppi.GuiMushPowersPowerInjector;
 import fr.alexandre1156.mushpowers.mppi.TileEntityMushPowersPowerInjector;
 import fr.alexandre1156.mushpowers.render.GhostRender;
+import fr.alexandre1156.mushpowers.render.RenderGDD;
 import fr.alexandre1156.mushpowers.render.SquidRender;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -28,9 +29,9 @@ public class ClientProxy extends CommonProxy{
 	public void preInit(FMLPreInitializationEvent e) {
 		super.preInit(e);
 		this.registerRenderBlock(blockMPPI);
-		this.registerRenderBlock(bushSquidMush);
-		this.registerRenderBlock(bushChickenMush);
-		this.registerRenderBlock(bushCursedMush);
+		this.registerRenderBlock(bushSquidshroom);
+		this.registerRenderBlock(bushChickenshroom);
+		this.registerRenderBlock(bushCursedshroom);
 		this.registerRenderBlock(bushFlyshroom);
 		this.registerRenderBlock(bushGhostshroom);
 		this.registerRenderBlock(bushHostileshroom);
