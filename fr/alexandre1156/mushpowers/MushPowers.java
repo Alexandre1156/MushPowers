@@ -29,6 +29,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+//use these
+import net.minecraftforge.common.BiomeManager;
+import net.minecraftforge.common.BiomeManager.BiomeEntry;
+import net.minecraftforge.common.BiomeManager.BiomeType;
+
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, guiFactory = Reference.GUI_FACTORY, updateJSON = "https://github.com/Alexandre1156/MushPowers/blob/master/Update.json")
 public class MushPowers {
 
@@ -42,6 +47,9 @@ public class MushPowers {
 
 	@Instance(Reference.MOD_ID)
 	public static MushPowers instance;
+	
+	//use this 
+	public static BiomeMushPowers mushbiome = new BiomeMushPowers();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -59,6 +67,12 @@ public class MushPowers {
 //			}
 //			
 //		});
+		
+		//use these
+		mushbiome.setRegistryName("MushpowersBiome");
+		BiomeManager.addBiome(BiomeType.WARM, new BiomeEntry(mushbiome, 3));
+		GameRegistry.register(mushbiome);
+
 	}
 
 	@EventHandler
