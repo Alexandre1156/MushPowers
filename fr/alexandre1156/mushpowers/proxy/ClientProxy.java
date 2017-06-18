@@ -5,7 +5,6 @@ import fr.alexandre1156.mushpowers.mppi.ContainerMushPowersPowerInjector;
 import fr.alexandre1156.mushpowers.mppi.GuiMushPowersPowerInjector;
 import fr.alexandre1156.mushpowers.mppi.TileEntityMushPowersPowerInjector;
 import fr.alexandre1156.mushpowers.render.GhostRender;
-import fr.alexandre1156.mushpowers.render.RenderGDD;
 import fr.alexandre1156.mushpowers.render.SquidRender;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

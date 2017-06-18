@@ -33,7 +33,7 @@ public class EntityAINearestAttackablePlayerMush extends EntityAINearestAttackab
 		if (this.field_75299_d.func_70681_au().nextInt(10) != 0) 
             return false;
         else {
-            this.field_75309_a = this.field_75299_d.field_70170_p.func_184150_a(this.field_75299_d.field_70165_t, this.field_75299_d.field_70163_u + (double)this.field_75299_d.func_70047_e(), this.field_75299_d.field_70161_v, 500D, 500D, new Function<EntityPlayer, Double>() {
+            this.field_75309_a = this.field_75299_d.field_70170_p.func_184150_a(this.field_75299_d.field_70165_t, this.field_75299_d.field_70163_u + (double)this.field_75299_d.func_70047_e(), this.field_75299_d.field_70161_v, 200D, 200D, new Function<EntityPlayer, Double>() {
                 @Nullable
                 public Double apply(@Nullable EntityPlayer p_apply_1_) {
                     ItemStack itemstack = p_apply_1_.func_184582_a(EntityEquipmentSlot.HEAD);
@@ -52,11 +52,9 @@ public class EntityAINearestAttackablePlayerMush extends EntityAINearestAttackab
                 }
             }, (Predicate<EntityPlayer>)this.field_82643_g);
             if(this.field_75309_a != null && this.field_75309_a instanceof EntityPlayer) {
-            	//System.out.println(targetEntity.getName()+" -");
             	IPlayerMush mush = ((EntityPlayer) this.field_75309_a).getCapability(PlayerMushProvider.MUSH_CAP, null);
-            	//System.out.println(mush.isHostile()+" "+(this.targetEntity != null));
             	if(mush.isHostile())
-            		return true;
+            		return this.field_75309_a != null;
             	else if(this.field_75309_a.func_70032_d(this.field_75299_d) <= 35.0D)
             		return this.field_75309_a != null;
             	else

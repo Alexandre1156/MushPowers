@@ -8,12 +8,12 @@ import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
 import fr.alexandre1156.mushpowers.config.MushConfig;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -24,8 +24,8 @@ public class HostileshroomEvent extends ShroomEvent {
 
 	@Override
 	protected void onEntityJoinWorld(Entity entity, World world) {
-		if(entity instanceof EntityCreature && !(entity instanceof EntityZombie)) {
-			final EntityCreature entCreature = (EntityCreature) entity;
+		if(entity instanceof EntityMob && !(entity instanceof EntityZombie)) {
+			final EntityMob entCreature = (EntityMob) entity;
 			entCreature.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111128_a(100D);
 			EntityAIBase entryToDelete = null;
 			Iterator<EntityAITaskEntry> iter = entCreature.field_70715_bh.field_75782_a.iterator();
@@ -39,8 +39,10 @@ public class HostileshroomEvent extends ShroomEvent {
 					}
 				}
 			}
-			entCreature.field_70715_bh.func_85156_a(entryToDelete);
-			entCreature.field_70715_bh.func_75776_a(1, new EntityAINearestAttackablePlayerMush(entCreature));
+			if(entryToDelete != null) {
+				entCreature.field_70715_bh.func_85156_a(entryToDelete);
+				entCreature.field_70715_bh.func_75776_a(1, new EntityAINearestAttackablePlayerMush(entCreature));
+			}
 		}
 	}
 	

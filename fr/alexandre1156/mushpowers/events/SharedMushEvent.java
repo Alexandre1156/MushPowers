@@ -1,16 +1,9 @@
 package fr.alexandre1156.mushpowers.events;
 
-import org.lwjgl.input.Keyboard;
-
 import com.google.common.base.Predicate;
 
 import fr.alexandre1156.mushpowers.EntityAINearestAttackablePlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
-import fr.alexandre1156.mushpowers.proxy.ClientProxy;
-import fr.alexandre1156.mushpowers.render.RenderGDD;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -18,7 +11,6 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 public class SharedMushEvent extends ShroomEvent {

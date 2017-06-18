@@ -32,11 +32,10 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, guiFactory = Reference.GUI_FACTORY, updateJSON = "https://github.com/Alexandre1156/MushPowers/blob/master/Update.json")
 public class MushPowers {
 
-	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
+	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS)
 	public static CommonProxy proxy;
 	public static SimpleNetworkWrapper network;
 	public static ArrayList<String> cursedShroomViewers;
-	//public static int mushBiomeID;
 	private HashMap<String, Boolean> squidPlayers;
 	private HashMap<String, Boolean> ghostPlayers;
 
@@ -51,14 +50,6 @@ public class MushPowers {
 		MushConfig.config = new Configuration(event.getSuggestedConfigurationFile());
 		MushConfig.config.load();
 		MushConfig.syncConfig();
-//		RenderingRegistry.registerEntityRenderingHandler(EntityPlayer.class, new IRenderFactory() {
-//
-//			@Override
-//			public Render createRenderFor(RenderManager manager) {
-//				return new SquidRender(manager);
-//			}
-//			
-//		});
 	}
 
 	@EventHandler
@@ -94,8 +85,6 @@ public class MushPowers {
 	public void setSquidPlayer(String username, boolean value){
 		if(this.squidPlayers.containsKey(username))
 			this.squidPlayers.replace(username, value);
-		else
-			return;
 	}
 	
 	public HashMap<String, Boolean> getSquidPlayers() {

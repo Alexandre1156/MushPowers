@@ -3,6 +3,8 @@ package fr.alexandre1156.mushpowers.proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
@@ -24,6 +26,7 @@ import fr.alexandre1156.mushpowers.capabilities.CapabilityHandler;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.IRegen;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush;
+import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushStorage;
 import fr.alexandre1156.mushpowers.capabilities.RegenCap;
 import fr.alexandre1156.mushpowers.capabilities.RegenStorage;
@@ -56,12 +59,12 @@ import fr.alexandre1156.mushpowers.items.shrooms.ZombieawayShroom;
 import fr.alexandre1156.mushpowers.mppi.BlockMushPowersPowerInjector;
 import fr.alexandre1156.mushpowers.mppi.TileEntityMushPowersPowerInjector;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -99,7 +102,6 @@ public class CommonProxy {
 	public static ItemFood itemFlyshroom;
 	public static ItemFood itemLowershroom;
 	//NE PAS OUBLIER D'ENRGISTRER L'ITEM DANS COMMONPROXY ET SON RENDER DANS CLIENTPROXY
-	public static Biome mushBiome;
 	public static EventHandler eventHandler;
 	protected static ArrayList<Item> itemsMod;
 	protected static ArrayList<BushMush> bushPowers;
@@ -112,9 +114,7 @@ public class CommonProxy {
 		CapabilityManager.INSTANCE.register(IRegen.class, new RegenStorage(), RegenCap.class);
 		MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
 		MinecraftForge.EVENT_BUS.register(MushConfig.class);
-		//MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(eventHandler = new EventHandler());
-		//MinecraftForge.EVENT_BUS.register(new EventTrigger());
 		
 		itemMushElexir = new ItemMushroomElixir();
 		itemRegenshroom = new Regenshroom();
@@ -144,22 +144,73 @@ public class CommonProxy {
 		bushShieldshroom = new BlockBushShield();
 		bushRegenshroom = new BlockBushRegen();
 		bushZombieawayShroom = new BlockBushZombieAway();
-		eventHandler.addShroomEvent(new SquidshroomEvent());
-		eventHandler.addShroomEvent(new PizzashroomEvent());
-		eventHandler.addShroomEvent(new ZombieawayShroomEvent());
-		eventHandler.addShroomEvent(new HostileshroomEvent());
-		eventHandler.addShroomEvent(new SharedMushEvent());
-		eventHandler.addShroomEvent(new ChickenshroomEvent());
-		eventHandler.addShroomEvent(new GhostshroomEvent());
-		eventHandler.addShroomEvent(new ElectricshroomEvent());
-		eventHandler.addShroomEvent(new ShieldshroomEvent());
-		eventHandler.addShroomEvent(new FlyshroomEvent());
-		eventHandler.addShroomEvent(new LowershroomEvent());
-//		mushBiome = new BiomeMushPowers();
-//		Biome.registerBiome(MushPowers.mushBiomeID, mushBiome.getBiomeName(), this.mushBiome);
-//		BiomeManager.addBiome(BiomeType.COOL, new BiomeEntry(this.mushBiome, 10));
-//		BiomeDictionary.addTypes(mushBiome, Type.PLAINS);
-//		MinecraftForge.TERRAIN_GEN_BUS.register(mushBiome);
+		eventHandler.addShroomEvent(new SquidshroomEvent(), new Predicate<Entity>() {
+
+			@Override
+			public boolean apply(Entity input) {
+				return input instanceof EntityPlayer ? ((EntityPlayer) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isSquid() : false;
+			}
+			
+		});
+		eventHandler.addShroomEvent(new PizzashroomEvent(), new Predicate<Entity>() {
+
+			@Override
+			public boolean apply(Entity input) {
+				return input instanceof EntityPlayer ? ((EntityPlayer) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isPizzaEaten() : false;
+			}
+			
+		});
+		eventHandler.addShroomEvent(new ZombieawayShroomEvent(), Predicates.alwaysTrue());
+		eventHandler.addShroomEvent(new HostileshroomEvent(), Predicates.alwaysTrue()); //-> THE MAIN PROBLEM
+		eventHandler.addShroomEvent(new SharedMushEvent(), Predicates.alwaysTrue());
+		eventHandler.addShroomEvent(new ChickenshroomEvent(), new Predicate<Entity>() {
+
+			@Override
+			public boolean apply(Entity input) {
+				return input instanceof EntityPlayer ? ((EntityPlayer) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isChicken() : false;
+			}
+			
+		});
+		eventHandler.addShroomEvent(new GhostshroomEvent(), new Predicate<Entity>() {
+
+			@Override
+			public boolean apply(Entity input) {
+				return input instanceof EntityPlayer ? ((EntityPlayer) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isGhost() : false;
+			}
+			
+		});
+		eventHandler.addShroomEvent(new ElectricshroomEvent(), new Predicate<Entity>() {
+
+			@Override
+			public boolean apply(Entity input) {
+				return input instanceof EntityPlayer ? ((EntityPlayer) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isElectric() : false;
+			}
+			
+		});
+		eventHandler.addShroomEvent(new ShieldshroomEvent(), new Predicate<Entity>() {
+
+			@Override
+			public boolean apply(Entity input) {
+				return input instanceof EntityPlayer ? ((EntityPlayer) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isShieldActive() : false;
+			}
+			
+		});
+		eventHandler.addShroomEvent(new FlyshroomEvent(), new Predicate<Entity>() {
+
+			@Override
+			public boolean apply(Entity input) {
+				return input instanceof EntityPlayer ? ((EntityPlayer) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isFlying() : false;
+			}
+			
+		});
+		eventHandler.addShroomEvent(new LowershroomEvent(), new Predicate<Entity>() {
+
+			@Override
+			public boolean apply(Entity input) {
+				return input instanceof EntityPlayer ? ((EntityPlayer) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isRepairCostLower() : false;
+			}
+			
+		});
 		this.register();
 	}
 	
