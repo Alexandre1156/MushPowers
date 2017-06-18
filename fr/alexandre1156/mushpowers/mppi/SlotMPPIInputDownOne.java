@@ -17,8 +17,8 @@ public class SlotMPPIInputDownOne extends SlotItemHandler{
 	}
 	
 	@Override
-	public boolean func_75214_a(ItemStack stack) {
-		return stack.func_77969_a(new ItemStack(CommonProxy.itemMushElexir));
+	public boolean isItemValid(ItemStack stack) {
+		return stack.isItemEqual(new ItemStack(CommonProxy.itemMushElexir));
 	}
 	
 //	@Override

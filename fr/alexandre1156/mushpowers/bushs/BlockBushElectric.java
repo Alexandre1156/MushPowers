@@ -9,7 +9,7 @@ public class BlockBushElectric extends BushMush {
 	public BlockBushElectric() {
 		super(CommonProxy.itemElectricshroom);
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "bushelectric"));
-		this.func_149663_c("bushelectric");
+		this.setUnlocalizedName("bushelectric");
 	}
 	
 }

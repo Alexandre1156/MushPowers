@@ -83,22 +83,22 @@ public class GuiConfigMushPowers extends GuiConfig {
 	}
 
 	@Override
-	public void func_73866_w_() {
-		this.note = (new TextComponentTranslation("mush.config.note", new Object[0])).func_150260_c();
-		super.func_73866_w_();
+	public void initGui() {
+		this.note = (new TextComponentTranslation("mush.config.note", new Object[0])).getUnformattedText();
+		super.initGui();
 	}
 	
 	@Override
-	public void func_73863_a(int mouseX, int mouseY, float partialTicks) {
-		super.func_73863_a(mouseX, mouseY, partialTicks);
-		RenderHelper.func_74518_a();
-		if(this.field_146289_q.func_78256_a(this.note) > this.field_146294_l) {
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		super.drawScreen(mouseX, mouseY, partialTicks);
+		RenderHelper.disableStandardItemLighting();
+		if(this.fontRendererObj.getStringWidth(this.note) > this.width) {
 			String text2[] = this.seperate(this.note);
-			this.func_73732_a(field_146289_q, text2[0], this.field_146294_l / 2, 38 + (this.field_146292_n.size()-1) * 20, Color.white.getRGB());
-			this.func_73732_a(field_146289_q, text2[1], this.field_146294_l / 2, 38 + (this.field_146292_n.size()-1) * 20 + 10, Color.white.getRGB());
+			this.drawCenteredString(fontRendererObj, text2[0], this.width / 2, 38 + (this.buttonList.size()-1) * 20, Color.white.getRGB());
+			this.drawCenteredString(fontRendererObj, text2[1], this.width / 2, 38 + (this.buttonList.size()-1) * 20 + 10, Color.white.getRGB());
 		} else
-			this.func_73732_a(field_146289_q, this.note, this.field_146294_l / 2, 38 + (this.field_146292_n.size()-1) * 20, Color.white.getRGB());
-		RenderHelper.func_74519_b();
+			this.drawCenteredString(fontRendererObj, this.note, this.width / 2, 38 + (this.buttonList.size()-1) * 20, Color.white.getRGB());
+		RenderHelper.enableStandardItemLighting();
 	}
 	
 	private String[] seperate(String text){
@@ -110,9 +110,9 @@ public class GuiConfigMushPowers extends GuiConfig {
 		boolean switchToNextLine = false;
 		int count = 0;
 		for(char c : text.toCharArray()){
-			widthLimit += this.field_146289_q.func_78263_a(c);
+			widthLimit += this.fontRendererObj.getCharWidth(c);
 			count++;
-			if(widthLimit > this.field_146294_l) {
+			if(widthLimit > this.width) {
 				switchToNextLine = true;
 				widthLimit = 0;
 			}
@@ -132,14 +132,14 @@ public class GuiConfigMushPowers extends GuiConfig {
 	}
 	
 	@Override
-	protected void func_146284_a(GuiButton button) {
-		super.func_146284_a(button);
+	protected void actionPerformed(GuiButton button) {
+		super.actionPerformed(button);
 	}
 	
 	@Override
-	public void func_146281_b() {
+	public void onGuiClosed() {
 		MushConfig.syncConfig();
-		super.func_146281_b();
+		super.onGuiClosed();
 	}
 	
 }

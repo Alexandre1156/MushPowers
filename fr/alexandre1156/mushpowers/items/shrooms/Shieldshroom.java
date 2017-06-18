@@ -22,15 +22,15 @@ public class Shieldshroom extends ItemFood {
 
 	public Shieldshroom() {
 		super(1, 0.0f, false);
-		this.func_77655_b("shieldshroom");
+		this.setUnlocalizedName("shieldshroom");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "shieldshroom"));
-		this.func_77637_a(CreativeTabs.field_78039_h);
-		this.func_77848_i();
+		this.setCreativeTab(CreativeTabs.FOOD);
+		this.setAlwaysEdible();
 	}
 	
 	@Override
-	protected void func_77849_c(ItemStack stack, World worldIn, EntityPlayer player) {
-		if(!worldIn.field_72995_K){
+	protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
+		if(!worldIn.isRemote){
 			IPlayerMush mush = player.getCapability(PlayerMushProvider.MUSH_CAP, null);
 			mush.setShieldDamageAbsorb((byte) MushConfig.maxDamageAbsorbShieldshroom);
 			PlayerMushProvider.syncCapabilities(player);
@@ -38,16 +38,16 @@ public class Shieldshroom extends ItemFood {
 	}
 	
 	@Override
-	public ActionResult<ItemStack> func_77659_a(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		ItemStack itemstack = playerIn.func_184586_b(handIn);
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+		ItemStack itemstack = playerIn.getHeldItem(handIn);
 		if(MushConfig.isMushPowersDesactived(this))
 			return new ActionResult(EnumActionResult.FAIL, itemstack);
 		else
-			return super.func_77659_a(worldIn, playerIn, handIn);
+			return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
 	@Override
-	public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		tooltip.add(ChatFormatting.WHITE+"Absorbs "+MushConfig.damageAbsordPercentShieldshroom+"% of the damage taken.");
 		tooltip.add(ChatFormatting.GREEN+""+ChatFormatting.BOLD+"Lasts when absorbing "+MushConfig.maxDamageAbsorbShieldshroom+" half-heaths of damage");
 		if(MushConfig.isMushPowersDesactived(this))

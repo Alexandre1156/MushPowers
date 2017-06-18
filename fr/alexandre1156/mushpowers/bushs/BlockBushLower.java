@@ -9,7 +9,7 @@ public class BlockBushLower extends BushMush {
 	public BlockBushLower() {
 		super(CommonProxy.itemLowershroom);
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "bushlower"));
-		this.func_149663_c("bushlower");
+		this.setUnlocalizedName("bushlower");
 	}
 	
 }

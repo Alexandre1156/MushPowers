@@ -8,7 +8,7 @@ public class BlockBushCursed extends BushMush {
 
 	public BlockBushCursed() {
 		super(CommonProxy.itemCursedshroom);
-		this.func_149663_c("bushcursed");
+		this.setUnlocalizedName("bushcursed");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "bushcursed"));
 	}
 	

@@ -16,7 +16,7 @@ public class SlotMPPIInputDownTwo extends SlotItemHandler{
 	}
 	
 	@Override
-	public boolean func_75214_a(ItemStack stack) {
+	public boolean isItemValid(ItemStack stack) {
 		return this.te.canBeSmelted(stack);
 	}
 

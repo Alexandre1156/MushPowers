@@ -15,18 +15,14 @@ public class ShieldshroomEvent extends ShroomEvent {
 		if(entLiv instanceof EntityPlayer){
 			EntityPlayer p = (EntityPlayer) entLiv;
 			IPlayerMush mush = entLiv.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			if(mush.isShieldActive()){
-				float shieldTaken = amount / (100 / MushConfig.damageAbsordPercentShieldshroom);
-				System.out.println(shieldTaken+" ( "+amount);
-				if(mush.getShieldDamage()-shieldTaken < 0){
-					shieldTaken = mush.getShieldDamage();
-					mush.setShieldDamageAbsorb(0f);
-				} else
-					mush.setShieldDamageAbsorb(mush.getShieldDamage()-shieldTaken);
-				p.func_146105_b(new TextComponentTranslation("shieldshroom.damagetaken.message", shieldTaken), true);
-				System.out.println(amount+" "+shieldTaken);
-				return (amount - shieldTaken);
-			}
+			float shieldTaken = amount / (100 / MushConfig.damageAbsordPercentShieldshroom);
+			if(mush.getShieldDamage()-shieldTaken < 0){
+				shieldTaken = mush.getShieldDamage();
+				mush.setShieldDamageAbsorb(0f);
+			} else
+				mush.setShieldDamageAbsorb(mush.getShieldDamage()-shieldTaken);
+			p.sendStatusMessage(new TextComponentTranslation("shieldshroom.damagetaken.message", shieldTaken), true);
+			return (amount - shieldTaken);
 		}
 		return super.onLivingHurt(entLiv, source, amount);
 	}

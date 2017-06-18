@@ -93,29 +93,29 @@ public class MushConfig {
 	}
 	
 	public static boolean isMushPowersDesactived(Item item){
-		if(item.equals(CommonProxy.itemChickenshroom) || Item.func_150898_a(CommonProxy.bushChickenshroom).equals(item))
+		if(item.equals(CommonProxy.itemChickenshroom) || Item.getItemFromBlock(CommonProxy.bushChickenshroom).equals(item))
 			return desactiveChicken;
-		if(item.equals(CommonProxy.itemCursedshroom) || Item.func_150898_a(CommonProxy.bushCursedshroom).equals(item))
+		if(item.equals(CommonProxy.itemCursedshroom) || Item.getItemFromBlock(CommonProxy.bushCursedshroom).equals(item))
 			return desactiveCursed;
-		if(item.equals(CommonProxy.itemElectricshroom) || Item.func_150898_a(CommonProxy.bushElectricshroom).equals(item))
+		if(item.equals(CommonProxy.itemElectricshroom) || Item.getItemFromBlock(CommonProxy.bushElectricshroom).equals(item))
 			return desactiveElectric;
-		if(item.equals(CommonProxy.itemFlyshroom) || Item.func_150898_a(CommonProxy.bushFlyshroom).equals(item))
+		if(item.equals(CommonProxy.itemFlyshroom) || Item.getItemFromBlock(CommonProxy.bushFlyshroom).equals(item))
 			return desactiveFly;
-		if(item.equals(CommonProxy.itemGhostshroom) || Item.func_150898_a(CommonProxy.bushGhostshroom).equals(item))
+		if(item.equals(CommonProxy.itemGhostshroom) || Item.getItemFromBlock(CommonProxy.bushGhostshroom).equals(item))
 			return desactiveGhost;
-		if(item.equals(CommonProxy.itemHostileshroom) || Item.func_150898_a(CommonProxy.bushHostileshroom).equals(item))
+		if(item.equals(CommonProxy.itemHostileshroom) || Item.getItemFromBlock(CommonProxy.bushHostileshroom).equals(item))
 			return desactiveHostile;
-		if(item.equals(CommonProxy.itemLowershroom) || Item.func_150898_a(CommonProxy.bushLowershroom).equals(item))
+		if(item.equals(CommonProxy.itemLowershroom) || Item.getItemFromBlock(CommonProxy.bushLowershroom).equals(item))
 			return desactiveLower;
-		if(item.equals(CommonProxy.itemPizzashroom) || Item.func_150898_a(CommonProxy.bushPizzashroom).equals(item))
+		if(item.equals(CommonProxy.itemPizzashroom) || Item.getItemFromBlock(CommonProxy.bushPizzashroom).equals(item))
 			return desactivePizza;
-		if(item.equals(CommonProxy.itemRegenshroom) || Item.func_150898_a(CommonProxy.bushRegenshroom).equals(item))
+		if(item.equals(CommonProxy.itemRegenshroom) || Item.getItemFromBlock(CommonProxy.bushRegenshroom).equals(item))
 			return desactiveRegen;
-		if(item.equals(CommonProxy.itemShieldshroom) || Item.func_150898_a(CommonProxy.bushShieldshroom).equals(item))
+		if(item.equals(CommonProxy.itemShieldshroom) || Item.getItemFromBlock(CommonProxy.bushShieldshroom).equals(item))
 			return desactiveShield;
-		if(item.equals(CommonProxy.itemSquidshroom) || Item.func_150898_a(CommonProxy.bushSquidshroom).equals(item))
+		if(item.equals(CommonProxy.itemSquidshroom) || Item.getItemFromBlock(CommonProxy.bushSquidshroom).equals(item))
 			return desactiveSquid;
-		if(item.equals(CommonProxy.itemZombieawayShroom) || Item.func_150898_a(CommonProxy.bushZombieawayShroom).equals(item))
+		if(item.equals(CommonProxy.itemZombieawayShroom) || Item.getItemFromBlock(CommonProxy.bushZombieawayShroom).equals(item))
 			return desactiveZombieAway;
 		return false;
 	}

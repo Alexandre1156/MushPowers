@@ -26,50 +26,50 @@ public class Regenshroom extends ItemFood {
 	
 	public Regenshroom() {
 		super(1, 0.0f, false);
-		this.func_77655_b("regenshroom");
+		this.setUnlocalizedName("regenshroom");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "regenshroom"));
-		this.func_77637_a(CreativeTabs.field_78039_h);
-		this.func_77848_i();
+		this.setCreativeTab(CreativeTabs.FOOD);
+		this.setAlwaysEdible();
 	}
 	
 	@Override
-	protected void func_77849_c(ItemStack stack, World worldIn, EntityPlayer player) {
-		if(!worldIn.field_72995_K){
+	protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
+		if(!worldIn.isRemote){
 			if(!stack.getCapability(RegenProvider.REGEN_CAP, null).isBad())
-				player.func_70691_i(MushConfig.hearthRegenshroom);
+				player.heal(MushConfig.hearthRegenshroom);
 			else {
-				int duration = this.field_77697_d.nextInt(2)+1 * 200;
-				int level = this.field_77697_d.nextInt(1);
-				player.func_70690_d(new PotionEffect(MobEffects.field_76431_k, duration, level));
-				player.func_70690_d(new PotionEffect(MobEffects.field_76440_q, duration, level));
-				player.func_70690_d(new PotionEffect(MobEffects.field_76436_u, duration, level));
+				int duration = this.itemRand.nextInt(2)+1 * 200;
+				int level = this.itemRand.nextInt(1);
+				player.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, duration, level));
+				player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, duration, level));
+				player.addPotionEffect(new PotionEffect(MobEffects.POISON, duration, level));
 			}
 		}
 	}
 	
 	@Override
-	public ActionResult<ItemStack> func_77659_a(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		ItemStack itemstack = playerIn.func_184586_b(handIn);
-		if(playerIn.func_110143_aJ() >= 20f || MushConfig.isMushPowersDesactived(this))
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+		ItemStack itemstack = playerIn.getHeldItem(handIn);
+		if(playerIn.getHealth() >= 20f || MushConfig.isMushPowersDesactived(this))
 			return new ActionResult(EnumActionResult.FAIL, itemstack);
 		else
-			return super.func_77659_a(worldIn, playerIn, handIn);
+			return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
 	@Override
-	public void func_77663_a(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 //		System.out.println(isSelected+" "+entityIn+" "+MushPowers.cursedShroomViewers.contains(entityIn.getName())+" "+!entityIn.world.isRemote+" - "+
 //				stack.getCapability(RegenProvider.REGEN_CAP, null).isBad());
 		if(isSelected && 
 				entityIn instanceof EntityPlayer && 
-				MushConfig.playersCanSeeFakeRegenshroom.contains(entityIn.func_70005_c_()) && 
-				!entityIn.field_70170_p.field_72995_K 
+				MushConfig.playersCanSeeFakeRegenshroom.contains(entityIn.getName()) && 
+				!entityIn.world.isRemote 
 				&& stack.getCapability(RegenProvider.REGEN_CAP, null).isBad())
-			((EntityPlayer) entityIn).func_146105_b(new TextComponentTranslation("cursedshroom.warning.message", new Object[0]), true);
+			((EntityPlayer) entityIn).sendStatusMessage(new TextComponentTranslation("cursedshroom.warning.message", new Object[0]), true);
 	}
 	
 	@Override
-	public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		tooltip.add(ChatFormatting.WHITE+"Regenerates "+MushConfig.hearthRegenshroom+" half-hearts.");
 		if(MushConfig.isMushPowersDesactived(this))
 			tooltip.add(ChatFormatting.RED+"THIS SHROOM IS DESACTIVED");

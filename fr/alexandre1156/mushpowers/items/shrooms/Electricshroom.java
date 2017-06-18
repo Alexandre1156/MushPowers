@@ -24,15 +24,15 @@ public class Electricshroom extends ItemFood{
 
 	public Electricshroom() {
 		super(1, 0.0F, false);
-		this.func_77655_b("electricshroom");
+		this.setUnlocalizedName("electricshroom");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "electricshroom"));
-		this.func_77637_a(CreativeTabs.field_78039_h);
-		this.func_77848_i();
+		this.setCreativeTab(CreativeTabs.FOOD);
+		this.setAlwaysEdible();
 	}
 	
 	@Override
-	protected void func_77849_c(ItemStack stack, World worldIn, EntityPlayer player) {
-		if(!worldIn.field_72995_K){
+	protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
+		if(!worldIn.isRemote){
 			IPlayerMush mush = player.getCapability(PlayerMushProvider.MUSH_CAP, null);
 			mush.setElectric(true);
 			mush.setCooldown(MainMushPowers.ELECTRIC, (short) MushConfig.cooldownElectric);
@@ -42,16 +42,16 @@ public class Electricshroom extends ItemFood{
 	}
 	
 	@Override
-	public ActionResult<ItemStack> func_77659_a(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		ItemStack itemstack = playerIn.func_184586_b(handIn);
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+		ItemStack itemstack = playerIn.getHeldItem(handIn);
 		if(MushConfig.isMushPowersDesactived(this))
 			return new ActionResult(EnumActionResult.FAIL, itemstack);
 		else
-			return super.func_77659_a(worldIn, playerIn, handIn);
+			return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
 	@Override
-	public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		tooltip.add(ChatFormatting.WHITE+"You will move faster and when hitting with a sword you have a 10% chance of electrifying your target,\nmaking it unable to move and dealing 3 extra hearts of damage.");
 		tooltip.add(ChatFormatting.GREEN+""+ChatFormatting.BOLD+"Lasts in "+MushUtils.correctCooldownMessage(MushConfig.cooldownElectric));
 		if(MushConfig.isMushPowersDesactived(this))

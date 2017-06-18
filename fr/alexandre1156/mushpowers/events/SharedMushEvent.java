@@ -19,9 +19,9 @@ public class SharedMushEvent extends ShroomEvent {
 	protected void onEntityJoinWorld(Entity entity, World world) {
 		if(entity instanceof EntityZombie){
 			EntityZombie zombie = (EntityZombie) entity;
-			zombie.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111128_a(100D);
+			zombie.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(100D);
 			//ZombieawayShroom and Hostileshroom
-			zombie.field_70715_bh.func_75776_a(3, new EntityAINearestAttackablePlayerMush(zombie, new Predicate<Entity>() {
+			zombie.targetTasks.addTask(3, new EntityAINearestAttackablePlayerMush(zombie, new Predicate<Entity>() {
 
 				@Override
 				public boolean apply(Entity input) {
@@ -36,7 +36,7 @@ public class SharedMushEvent extends ShroomEvent {
 	
 	@Override
 	protected void onLivingEntityUseItemTick(int duration, EntityLivingBase entLiv, ItemStack item) {
-		if(entLiv instanceof EntityPlayer && !entLiv.field_70170_p.field_72995_K && item.func_77973_b() == Items.field_151117_aB && duration <= 1)
+		if(entLiv instanceof EntityPlayer && !entLiv.world.isRemote && item.getItem() == Items.MILK_BUCKET && duration <= 1)
 			PlayerMushProvider.resetPlayer((EntityPlayer) entLiv, true);
 	}
 		

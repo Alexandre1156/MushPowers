@@ -20,43 +20,43 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 public class WorldGenMushPower extends WorldGenerator {
 
 	@Override
-	public boolean func_180709_b(World world, Random rand, BlockPos pos) {
-		if(this.isBiomeCorrect(Biome.func_185362_a(world.func_180494_b(pos)))){
+	public boolean generate(World world, Random rand, BlockPos pos) {
+		if(this.isBiomeCorrect(Biome.getIdForBiome(world.getBiome(pos)))){
 			ArrayList<BlockPos> list = Lists.<BlockPos>newArrayList();
 			for(int x = 0; x < 16; x++){
 				for(int z = 0; z < 16; z++){
-					BlockPos blockPos = new BlockPos(pos.func_177958_n()+x, pos.func_177956_o(), pos.func_177952_p()+z);
+					BlockPos blockPos = new BlockPos(pos.getX()+x, pos.getY(), pos.getZ()+z);
 					if(!this.isOnSurface(blockPos, world)){
 						blockPos = this.setAtSurface(blockPos, world);
 						if(blockPos == null)
 							return false;
 						else
-							list.add(new BlockPos(blockPos.func_177958_n(), blockPos.func_177956_o(), blockPos.func_177952_p()));
+							list.add(new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
 					} else
-						list.add(new BlockPos(blockPos.func_177958_n(), blockPos.func_177956_o(), blockPos.func_177952_p()));
+						list.add(new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
 				}
 			}
 			for(BlockPos pos2 : list) {
-				BlockPos upperPos = new BlockPos(pos2.func_177958_n(), pos2.func_177956_o()+1, pos2.func_177952_p());
+				BlockPos upperPos = new BlockPos(pos2.getX(), pos2.getY()+1, pos2.getZ());
 				if(this.needRemoved(upperPos, world))
-					world.func_175698_g(upperPos);
-				int xAdded = Math.abs(pos2.func_177958_n()-pos.func_177958_n());
-				int zAdded = Math.abs(pos2.func_177952_p()-pos.func_177952_p());
+					world.setBlockToAir(upperPos);
+				int xAdded = Math.abs(pos2.getX()-pos.getX());
+				int zAdded = Math.abs(pos2.getZ()-pos.getZ());
 				
 				if(this.isFirstLayer(xAdded, zAdded)){
 					if(rand.nextInt(4) == 0)
-						world.func_175656_a(pos2, Blocks.field_150391_bh.func_176223_P());
+						world.setBlockState(pos2, Blocks.MYCELIUM.getDefaultState());
 				} else if(this.isSecondLayer(xAdded, zAdded)){
 					if(rand.nextInt(3) == 0)
-						world.func_175656_a(pos2, Blocks.field_150391_bh.func_176223_P());
+						world.setBlockState(pos2, Blocks.MYCELIUM.getDefaultState());
 				} else if(this.isThirdLayer(xAdded, zAdded)){
 					if(rand.nextBoolean())
-						world.func_175656_a(pos2, Blocks.field_150391_bh.func_176223_P());
+						world.setBlockState(pos2, Blocks.MYCELIUM.getDefaultState());
 				} else {
-					world.func_175656_a(pos2, Blocks.field_150391_bh.func_176223_P());
+					world.setBlockState(pos2, Blocks.MYCELIUM.getDefaultState());
 				}
 				if(rand.nextInt(15) == 0)
-					(new WorldGenBigMushroom(Blocks.field_150419_aX)).func_180709_b(world, rand, upperPos);
+					(new WorldGenBigMushroom(Blocks.RED_MUSHROOM_BLOCK)).generate(world, rand, upperPos);
 				if(rand.nextInt(5) == 0 /*&& Block.isEqualTo(world.getBlockState(pos).getBlock(), Blocks.MYCELIUM)*/)
 					this.generateRandomMushPowerBush(upperPos, rand, world);
 			}
@@ -82,19 +82,19 @@ public class WorldGenMushPower extends WorldGenerator {
 	}
 	
 	private void generateMushPowerBush(BlockPos pos, World world, BushMush bush) {
-		if (world.func_175623_d(pos) && (!world.field_73011_w.func_177495_o() || pos.func_177956_o() < world.func_72800_K() - 1)
-				&& bush.func_180671_f(world, pos, bush.func_176223_P()))
-			world.func_180501_a(pos, bush.func_176223_P(), 2);
+		if (world.isAirBlock(pos) && (!world.provider.hasNoSky() || pos.getY() < world.getHeight() - 1)
+				&& bush.canBlockStay(world, pos, bush.getDefaultState()))
+			world.setBlockState(pos, bush.getDefaultState(), 2);
 	}
 	
 	private boolean isOnSurface(BlockPos pos, World world) {
-		if(world.func_175623_d(pos) || !this.isSurfaceBlockCompatible(world.func_180495_p(pos).func_177230_c()))
+		if(world.isAirBlock(pos) || !this.isSurfaceBlockCompatible(world.getBlockState(pos).getBlock()))
 			return false;
-		BlockPos underground = new BlockPos(pos.func_177958_n(), pos.func_177956_o()-1, pos.func_177952_p());
-		if(world.func_175623_d(underground) || !this.isSurfaceBlockCompatible(world.func_180495_p(underground).func_177230_c()))
+		BlockPos underground = new BlockPos(pos.getX(), pos.getY()-1, pos.getZ());
+		if(world.isAirBlock(underground) || !this.isSurfaceBlockCompatible(world.getBlockState(underground).getBlock()))
 			return false;
-		for(int height = 1; height+pos.func_177956_o() <= 256; height++){
-			if(!world.func_175623_d(pos) || !this.isSurfaceBlockCompatible(world.func_180495_p(new BlockPos(pos.func_177958_n(), pos.func_177956_o()+height, pos.func_177952_p())).func_177230_c()))
+		for(int height = 1; height+pos.getY() <= 256; height++){
+			if(!world.isAirBlock(pos) || !this.isSurfaceBlockCompatible(world.getBlockState(new BlockPos(pos.getX(), pos.getY()+height, pos.getZ())).getBlock()))
 				return false;
 		}
 		return true;
@@ -102,9 +102,9 @@ public class WorldGenMushPower extends WorldGenerator {
 	
 	private BlockPos setAtSurface(BlockPos actualPos, World world){
 		for(int i = 256; i > 0; i--){ //Need at least 7 layers
-			BlockPos pos2 = new BlockPos(actualPos.func_177958_n(), i, actualPos.func_177952_p());
-			if(this.isSurfaceBlockCompatible(world.func_180495_p(pos2).func_177230_c()) && !world.func_175623_d(pos2)){
-				if(i >= 249 || world.func_180495_p(new BlockPos(pos2.func_177958_n(), pos2.func_177956_o()+1, pos2.func_177952_p())).func_177230_c() instanceof BlockStaticLiquid) {
+			BlockPos pos2 = new BlockPos(actualPos.getX(), i, actualPos.getZ());
+			if(this.isSurfaceBlockCompatible(world.getBlockState(pos2).getBlock()) && !world.isAirBlock(pos2)){
+				if(i >= 249 || world.getBlockState(new BlockPos(pos2.getX(), pos2.getY()+1, pos2.getZ())).getBlock() instanceof BlockStaticLiquid) {
 					pos2 = null;
 					actualPos = null;
 					break;
@@ -119,37 +119,37 @@ public class WorldGenMushPower extends WorldGenerator {
 	}
 	
 	private boolean isSurfaceBlockCompatible(Block block){
-		return Block.func_149680_a(block, Blocks.field_150362_t) ? false : Block.func_149680_a(block, Blocks.field_150361_u) ? false : 
-			Block.func_149680_a(block, Blocks.field_150329_H) ? false : Block.func_149680_a(block, Blocks.field_150355_j) ? false : Block.func_149680_a(block, Blocks.field_150353_l) ? false : 
-			Block.func_149680_a(block, Blocks.field_150431_aC) ? false : Block.func_149680_a(block, Blocks.field_150328_O) ? false :
-			Block.func_149680_a(block, Blocks.field_150327_N) ? false : Block.func_149680_a(block, Blocks.field_150330_I) ? false :
-			Block.func_149680_a(block, Blocks.field_150345_g) ? false : Block.func_149680_a(block, Blocks.field_150338_P) ? false :
-			Block.func_149680_a(block, Blocks.field_150337_Q) ? false : Block.func_149680_a(block, Blocks.field_150419_aX) ? false : 
-			Block.func_149680_a(block, Blocks.field_150420_aW) ? false : block instanceof BushMush ? false : 
-			Block.func_149680_a(block, Blocks.field_150395_bd) ? false : Block.func_149680_a(block, Blocks.field_150436_aH) ? false : Block.func_149680_a(block, Blocks.field_150392_bi) ? false : 
-			Block.func_149680_a(block, Blocks.field_150398_cm) ? false : Block.func_149680_a(block, Blocks.field_150364_r) ? false : Block.func_149680_a(block, Blocks.field_150363_s) ? false : true;
+		return Block.isEqualTo(block, Blocks.LEAVES) ? false : Block.isEqualTo(block, Blocks.LEAVES2) ? false : 
+			Block.isEqualTo(block, Blocks.TALLGRASS) ? false : Block.isEqualTo(block, Blocks.WATER) ? false : Block.isEqualTo(block, Blocks.LAVA) ? false : 
+			Block.isEqualTo(block, Blocks.SNOW_LAYER) ? false : Block.isEqualTo(block, Blocks.RED_FLOWER) ? false :
+			Block.isEqualTo(block, Blocks.YELLOW_FLOWER) ? false : Block.isEqualTo(block, Blocks.DEADBUSH) ? false :
+			Block.isEqualTo(block, Blocks.SAPLING) ? false : Block.isEqualTo(block, Blocks.BROWN_MUSHROOM) ? false :
+			Block.isEqualTo(block, Blocks.RED_MUSHROOM) ? false : Block.isEqualTo(block, Blocks.RED_MUSHROOM_BLOCK) ? false : 
+			Block.isEqualTo(block, Blocks.BROWN_MUSHROOM_BLOCK) ? false : block instanceof BushMush ? false : 
+			Block.isEqualTo(block, Blocks.VINE) ? false : Block.isEqualTo(block, Blocks.REEDS) ? false : Block.isEqualTo(block, Blocks.WATERLILY) ? false : 
+			Block.isEqualTo(block, Blocks.DOUBLE_PLANT) ? false : Block.isEqualTo(block, Blocks.LOG) ? false : Block.isEqualTo(block, Blocks.LOG2) ? false : true;
 	}
 	
 	private boolean needRemoved(BlockPos posUpper, World world){
-		Block block = world.func_180495_p(posUpper).func_177230_c();
-		return Block.func_149680_a(block, Blocks.field_150329_H) ? true : Block.func_149680_a(block, Blocks.field_150431_aC) ? true : 
-			Block.func_149680_a(block, Blocks.field_150328_O) ? true : Block.func_149680_a(block, Blocks.field_150327_N) ? true : 
-				Block.func_149680_a(block, Blocks.field_150330_I) ? true : Block.func_149680_a(block, Blocks.field_150345_g) ? true : 
-					Block.func_149680_a(block, Blocks.field_150338_P) ? false : Block.func_149680_a(block, Blocks.field_150337_Q) ? true : 
-						Block.func_149680_a(block, Blocks.field_150395_bd) ? true : Block.func_149680_a(block, Blocks.field_150436_aH) ? true : 
-							Block.func_149680_a(block, Blocks.field_150392_bi) ? true : Block.func_149680_a(block, Blocks.field_150398_cm) ? true : 
+		Block block = world.getBlockState(posUpper).getBlock();
+		return Block.isEqualTo(block, Blocks.TALLGRASS) ? true : Block.isEqualTo(block, Blocks.SNOW_LAYER) ? true : 
+			Block.isEqualTo(block, Blocks.RED_FLOWER) ? true : Block.isEqualTo(block, Blocks.YELLOW_FLOWER) ? true : 
+				Block.isEqualTo(block, Blocks.DEADBUSH) ? true : Block.isEqualTo(block, Blocks.SAPLING) ? true : 
+					Block.isEqualTo(block, Blocks.BROWN_MUSHROOM) ? false : Block.isEqualTo(block, Blocks.RED_MUSHROOM) ? true : 
+						Block.isEqualTo(block, Blocks.VINE) ? true : Block.isEqualTo(block, Blocks.REEDS) ? true : 
+							Block.isEqualTo(block, Blocks.WATERLILY) ? true : Block.isEqualTo(block, Blocks.DOUBLE_PLANT) ? true : 
 								block instanceof BushMush ? true : false;
 	}
 	
 	private boolean isBiomeCorrect(int biomeID){
-		return biomeID != Biome.func_185362_a(Biomes.field_150575_M) && biomeID != Biome.func_185362_a(Biomes.field_76770_e)
-			&& biomeID != Biome.func_185362_a(Biomes.field_76783_v) && biomeID != Biome.func_185362_a(Biomes.field_150580_W)
-			&& biomeID != Biome.func_185362_a(Biomes.field_185443_S) && biomeID != Biome.func_185362_a(Biomes.field_185434_af)
-			&& biomeID != Biome.func_185362_a(Biomes.field_76778_j) && biomeID != Biome.func_185362_a(Biomes.field_76782_w)
-			&& biomeID != Biome.func_185362_a(Biomes.field_150574_L) && biomeID != Biome.func_185362_a(Biomes.field_76792_x)
-			&& biomeID != Biome.func_185362_a(Biomes.field_185446_X) && biomeID != Biome.func_185362_a(Biomes.field_185447_Y)
-			&& biomeID != Biome.func_185362_a(Biomes.field_76771_b) && biomeID != Biome.func_185362_a(Biomes.field_76779_k)
-			&& biomeID != Biome.func_185362_a(Biomes.field_185440_P);
+		return biomeID != Biome.getIdForBiome(Biomes.DEEP_OCEAN) && biomeID != Biome.getIdForBiome(Biomes.EXTREME_HILLS)
+			&& biomeID != Biome.getIdForBiome(Biomes.EXTREME_HILLS_EDGE) && biomeID != Biome.getIdForBiome(Biomes.EXTREME_HILLS_WITH_TREES)
+			&& biomeID != Biome.getIdForBiome(Biomes.MUTATED_EXTREME_HILLS) && biomeID != Biome.getIdForBiome(Biomes.MUTATED_EXTREME_HILLS_WITH_TREES)
+			&& biomeID != Biome.getIdForBiome(Biomes.HELL) && biomeID != Biome.getIdForBiome(Biomes.JUNGLE)
+			&& biomeID != Biome.getIdForBiome(Biomes.JUNGLE_EDGE) && biomeID != Biome.getIdForBiome(Biomes.JUNGLE_HILLS)
+			&& biomeID != Biome.getIdForBiome(Biomes.MUTATED_JUNGLE) && biomeID != Biome.getIdForBiome(Biomes.MUTATED_JUNGLE_EDGE)
+			&& biomeID != Biome.getIdForBiome(Biomes.OCEAN) && biomeID != Biome.getIdForBiome(Biomes.SKY)
+			&& biomeID != Biome.getIdForBiome(Biomes.VOID);
 	}
 
 }

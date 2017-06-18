@@ -61,18 +61,18 @@ public class ClientProxy extends CommonProxy{
 			
 			@Override
 			public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-				return ID == MUSHPOWERS_POWER_INJECTOR ? new ContainerMushPowersPowerInjector(player.field_71071_by, (TileEntityMushPowersPowerInjector) world.func_175625_s(new BlockPos(x, y, z))) : null;
+				return ID == MUSHPOWERS_POWER_INJECTOR ? new ContainerMushPowersPowerInjector(player.inventory, (TileEntityMushPowersPowerInjector) world.getTileEntity(new BlockPos(x, y, z))) : null;
 			}
 			
 			@Override
 			public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-				return ID == MUSHPOWERS_POWER_INJECTOR ? new GuiMushPowersPowerInjector(player.field_71071_by, (TileEntityMushPowersPowerInjector) world.func_175625_s(new BlockPos(x, y, z))) : null;
+				return ID == MUSHPOWERS_POWER_INJECTOR ? new GuiMushPowersPowerInjector(player.inventory, (TileEntityMushPowersPowerInjector) world.getTileEntity(new BlockPos(x, y, z))) : null;
 			}
 		});
 	}
 	
 	public void registerRenderBlock(Block block){
-		ModelLoader.setCustomModelResourceLocation(Item.func_150898_a(block), 0, new ModelResourceLocation(block.getRegistryName(), "inventory"));
+		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(block.getRegistryName(), "inventory"));
 	}
 	
 	public void registerRenderItem(Item item){
@@ -82,8 +82,8 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void init(FMLInitializationEvent e) {
 		super.init(e);
-		squidRender = new SquidRender(Minecraft.func_71410_x().func_175598_ae());
-		ghostRender = new GhostRender(Minecraft.func_71410_x().func_175598_ae());
+		squidRender = new SquidRender(Minecraft.getMinecraft().getRenderManager());
+		ghostRender = new GhostRender(Minecraft.getMinecraft().getRenderManager());
 	}
 	
 }

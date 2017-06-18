@@ -16,12 +16,12 @@ public class FlyshroomEvent extends ShroomEvent {
 	protected void onLivingUpdate(Entity ent, EntityLivingBase entLiv) {
 		if(entLiv instanceof EntityPlayer) {
 			EntityPlayer p = (EntityPlayer) entLiv;
-			PotionEffect potion = p.func_70660_b(MobEffects.field_188424_y);
+			PotionEffect potion = p.getActivePotionEffect(MobEffects.LEVITATION);
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			if(potion != null && potion.func_76459_b() >= 0) {
-				mush.setCooldown(MainMushPowers.FLY, (short) potion.func_76459_b());
+			if(potion != null && potion.getDuration() >= 0) {
+				mush.setCooldown(MainMushPowers.FLY, (short) potion.getDuration());
 				PlayerMushProvider.syncCapabilities(p);
-			} else if(potion == null && mush.isFlying() && mush.getCooldown(MainMushPowers.FLY) == 1){
+			} else if(potion == null && mush.getCooldown(MainMushPowers.FLY) == 1){
 				mush.setCooldown(MainMushPowers.FLY, (short) 0);
 				PlayerMushProvider.syncCapabilities(p);
 			}
@@ -30,10 +30,10 @@ public class FlyshroomEvent extends ShroomEvent {
 	
 	@Override
 	protected boolean onLivingEntityFall(Entity ent, EntityLivingBase entLiv, float distance, float damageMultiplier) {
-		if(entLiv instanceof EntityPlayer && !entLiv.field_70170_p.field_72995_K) {
+		if(entLiv instanceof EntityPlayer && !entLiv.world.isRemote) {
 			EntityPlayer p = (EntityPlayer) entLiv;
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			if(mush.getCooldown(MainMushPowers.FLY) <= 0 && mush.isFlying()){
+			if(mush.getCooldown(MainMushPowers.FLY) <= 0){
 				mush.setFly(false);
 				mush.setCooldown(MainMushPowers.FLY, (short) MushConfig.cooldownFly);
 				PlayerMushProvider.syncCapabilities(p);

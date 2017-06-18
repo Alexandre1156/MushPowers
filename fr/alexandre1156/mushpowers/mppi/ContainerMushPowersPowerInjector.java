@@ -20,66 +20,66 @@ public class ContainerMushPowersPowerInjector extends Container {
 		this.te = tileEnt;
 		this.totalCookTime = 200;
 		IItemHandler handler = tileEnt.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-		this.func_75146_a(new SlotMPPIInputUp(handler, 0, 56, 17, tileEnt));
-		this.func_75146_a(new SlotMPPIInputDownTwo(handler, 1, 56, 53, tileEnt));
-		this.func_75146_a(new SlotMPPIOutput(handler, 2, 112, 17, playerInv.field_70458_d));
-		this.func_75146_a(new SlotMPPIOutput(handler, 3, 112, 53, playerInv.field_70458_d));
-		this.func_75146_a(new SlotMPPIInputDownOne(handler, 4, 36, 53, tileEnt));
+		this.addSlotToContainer(new SlotMPPIInputUp(handler, 0, 56, 17, tileEnt));
+		this.addSlotToContainer(new SlotMPPIInputDownTwo(handler, 1, 56, 53, tileEnt));
+		this.addSlotToContainer(new SlotMPPIOutput(handler, 2, 112, 17, playerInv.player));
+		this.addSlotToContainer(new SlotMPPIOutput(handler, 3, 112, 53, playerInv.player));
+		this.addSlotToContainer(new SlotMPPIInputDownOne(handler, 4, 36, 53, tileEnt));
 
 		for (int y = 0; y < 3; y++) { // Add player Inventory
 			for (int x = 0; x < 9; x++)
-				this.func_75146_a(new Slot(playerInv, x + y * 9 + 9, 8 + x * 18, 84 + y * 18));
+				this.addSlotToContainer(new Slot(playerInv, x + y * 9 + 9, 8 + x * 18, 84 + y * 18));
 		}
 
 		for (int x = 0; x < 9; x++) // Add player hotbar
-			this.func_75146_a(new Slot(playerInv, x, 8 + x * 18, 142));
+			this.addSlotToContainer(new Slot(playerInv, x, 8 + x * 18, 142));
 
 	}
 
 	@Override
-	public boolean func_75145_c(EntityPlayer playerIn) {
-		return !playerIn.func_175149_v();
+	public boolean canInteractWith(EntityPlayer playerIn) {
+		return !playerIn.isSpectator();
 	}
 
-	public ItemStack func_82846_b(EntityPlayer playerIn, int index) {
-		ItemStack itemstack = ItemStack.field_190927_a;
-		Slot slot = (Slot) this.field_75151_b.get(index);
+	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+		ItemStack itemstack = ItemStack.EMPTY;
+		Slot slot = (Slot) this.inventorySlots.get(index);
 
-		if (slot != null && slot.func_75216_d()) {
-			ItemStack itemstack1 = slot.func_75211_c();
-			itemstack = itemstack1.func_77946_l();
+		if (slot != null && slot.getHasStack()) {
+			ItemStack itemstack1 = slot.getStack();
+			itemstack = itemstack1.copy();
 
 			if (index == 0 || index == 1 || index == 2 || index == 3 || index == 4) {
-				if (!this.func_75135_a(itemstack1, 5, 41, true)) 
-					return ItemStack.field_190927_a;
-				if(index == 2 && itemstack1.func_190916_E() >= 64)
+				if (!this.mergeItemStack(itemstack1, 5, 41, true)) 
+					return ItemStack.EMPTY;
+				if(index == 2 && itemstack1.getCount() >= 64)
 					this.te.setConsumingUp(true);
-				if(index == 3 && itemstack1.func_190916_E() >= 64)
+				if(index == 3 && itemstack1.getCount() >= 64)
 					this.te.setConsumingDown(true);
-				slot.func_75220_a(itemstack1, itemstack);
+				slot.onSlotChange(itemstack1, itemstack);
 			} else {
-				if(itemstack1.func_77969_a(new ItemStack(Blocks.field_150337_Q)) && this.func_75135_a(itemstack1, 0, 1, false))
-					return ItemStack.field_190927_a;
-				if(itemstack1.func_77969_a(new ItemStack(CommonProxy.itemMushElexir)) && this.func_75135_a(itemstack1, 4, 5, false))
-					return ItemStack.field_190927_a;
-				if(CommonProxy.isModItem(itemstack1.func_77973_b()) && this.func_75135_a(itemstack1, 1, 2, false))
-					return ItemStack.field_190927_a;
-				if(index >= 32 && index < 41 && this.func_75135_a(itemstack1, 5, 31, false))
-					return ItemStack.field_190927_a;
-				if(index >= 5 && index < 31 && this.func_75135_a(itemstack1, 32, 41, false))
-					return ItemStack.field_190927_a;
+				if(itemstack1.isItemEqual(new ItemStack(Blocks.RED_MUSHROOM)) && this.mergeItemStack(itemstack1, 0, 1, false))
+					return ItemStack.EMPTY;
+				if(itemstack1.isItemEqual(new ItemStack(CommonProxy.itemMushElexir)) && this.mergeItemStack(itemstack1, 4, 5, false))
+					return ItemStack.EMPTY;
+				if(CommonProxy.isModItem(itemstack1.getItem()) && this.mergeItemStack(itemstack1, 1, 2, false))
+					return ItemStack.EMPTY;
+				if(index >= 32 && index < 41 && this.mergeItemStack(itemstack1, 5, 31, false))
+					return ItemStack.EMPTY;
+				if(index >= 5 && index < 31 && this.mergeItemStack(itemstack1, 32, 41, false))
+					return ItemStack.EMPTY;
 			}
-			if (itemstack1.func_190926_b()) {
-				slot.func_75215_d(ItemStack.field_190927_a);
+			if (itemstack1.isEmpty()) {
+				slot.putStack(ItemStack.EMPTY);
 			} else {
-				slot.func_75218_e();
+				slot.onSlotChanged();
 			}
 
-			if (itemstack1.func_190916_E() == itemstack.func_190916_E()) {
-				return ItemStack.field_190927_a;
+			if (itemstack1.getCount() == itemstack.getCount()) {
+				return ItemStack.EMPTY;
 			}
 
-			slot.func_190901_a(playerIn, itemstack1);
+			slot.onTake(playerIn, itemstack1);
 		}
 		return itemstack;
 	}

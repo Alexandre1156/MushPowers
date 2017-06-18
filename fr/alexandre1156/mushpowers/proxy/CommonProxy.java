@@ -161,7 +161,7 @@ public class CommonProxy {
 			
 		});
 		eventHandler.addShroomEvent(new ZombieawayShroomEvent(), Predicates.alwaysTrue());
-		eventHandler.addShroomEvent(new HostileshroomEvent(), Predicates.alwaysTrue()); //-> THE MAIN PROBLEM
+		eventHandler.addShroomEvent(new HostileshroomEvent(), Predicates.alwaysTrue());
 		eventHandler.addShroomEvent(new SharedMushEvent(), Predicates.alwaysTrue());
 		eventHandler.addShroomEvent(new ChickenshroomEvent(), new Predicate<Entity>() {
 
@@ -256,7 +256,7 @@ public class CommonProxy {
 		GameRegistry.register(block);
 		Item itemBlock = new ItemBlock(block){
 			@Override
-			public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+			public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 				if(MushConfig.isMushPowersDesactived(this))
 					tooltip.add(ChatFormatting.RED+"THIS SHROOM IS DESACTIVED");
 			}

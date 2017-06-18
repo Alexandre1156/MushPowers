@@ -14,19 +14,19 @@ public class Thorshroom extends ItemFood {
 
 	public Thorshroom() {
 		super(1, 0.0f, false);
-		this.func_77655_b("thorshroom");
+		this.setUnlocalizedName("thorshroom");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "thorshroom"));
-		this.func_77637_a(CreativeTabs.field_78039_h);
-		this.func_77848_i();
+		this.setCreativeTab(CreativeTabs.FOOD);
+		this.setAlwaysEdible();
 	}
 	
 	@Override
-	protected void func_77849_c(ItemStack stack, World worldIn, EntityPlayer player) {
+	protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
 		
 	}
 	
 	@Override
-	public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		
 	}
 

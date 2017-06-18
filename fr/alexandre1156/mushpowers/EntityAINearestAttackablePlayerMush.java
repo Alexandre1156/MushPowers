@@ -29,20 +29,20 @@ public class EntityAINearestAttackablePlayerMush extends EntityAINearestAttackab
 	}
 	
 	@Override
-	public boolean func_75250_a() {
-		if (this.field_75299_d.func_70681_au().nextInt(10) != 0) 
+	public boolean shouldExecute() {
+		if (this.taskOwner.getRNG().nextInt(10) != 0) 
             return false;
         else {
-            this.field_75309_a = this.field_75299_d.field_70170_p.func_184150_a(this.field_75299_d.field_70165_t, this.field_75299_d.field_70163_u + (double)this.field_75299_d.func_70047_e(), this.field_75299_d.field_70161_v, 200D, 200D, new Function<EntityPlayer, Double>() {
+            this.targetEntity = this.taskOwner.world.getNearestAttackablePlayer(this.taskOwner.posX, this.taskOwner.posY + (double)this.taskOwner.getEyeHeight(), this.taskOwner.posZ, 200D, 200D, new Function<EntityPlayer, Double>() {
                 @Nullable
                 public Double apply(@Nullable EntityPlayer p_apply_1_) {
-                    ItemStack itemstack = p_apply_1_.func_184582_a(EntityEquipmentSlot.HEAD);
+                    ItemStack itemstack = p_apply_1_.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 
-                    if (itemstack.func_77973_b() == Items.field_151144_bL) {
-                        int i = itemstack.func_77952_i();
-                        boolean flag = EntityAINearestAttackablePlayerMush.this.field_75299_d instanceof EntitySkeleton && i == 0;
-                        boolean flag1 = EntityAINearestAttackablePlayerMush.this.field_75299_d instanceof EntityZombie && i == 2;
-                        boolean flag2 = EntityAINearestAttackablePlayerMush.this.field_75299_d instanceof EntityCreeper && i == 4;
+                    if (itemstack.getItem() == Items.SKULL) {
+                        int i = itemstack.getItemDamage();
+                        boolean flag = EntityAINearestAttackablePlayerMush.this.taskOwner instanceof EntitySkeleton && i == 0;
+                        boolean flag1 = EntityAINearestAttackablePlayerMush.this.taskOwner instanceof EntityZombie && i == 2;
+                        boolean flag2 = EntityAINearestAttackablePlayerMush.this.taskOwner instanceof EntityCreeper && i == 4;
 
                         if (flag || flag1 || flag2)
                             return Double.valueOf(0.5D);
@@ -50,13 +50,13 @@ public class EntityAINearestAttackablePlayerMush extends EntityAINearestAttackab
 
                     return Double.valueOf(1.0D);
                 }
-            }, (Predicate<EntityPlayer>)this.field_82643_g);
-            if(this.field_75309_a != null && this.field_75309_a instanceof EntityPlayer) {
-            	IPlayerMush mush = ((EntityPlayer) this.field_75309_a).getCapability(PlayerMushProvider.MUSH_CAP, null);
+            }, (Predicate<EntityPlayer>)this.targetEntitySelector);
+            if(this.targetEntity != null && this.targetEntity instanceof EntityPlayer) {
+            	IPlayerMush mush = ((EntityPlayer) this.targetEntity).getCapability(PlayerMushProvider.MUSH_CAP, null);
             	if(mush.isHostile())
-            		return this.field_75309_a != null;
-            	else if(this.field_75309_a.func_70032_d(this.field_75299_d) <= 35.0D)
-            		return this.field_75309_a != null;
+            		return this.targetEntity != null;
+            	else if(this.targetEntity.getDistanceToEntity(this.taskOwner) <= 35.0D)
+            		return this.targetEntity != null;
             	else
             		return false;
             }

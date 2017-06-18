@@ -64,7 +64,7 @@ public class PlayerMushProvider implements ICapabilitySerializable<NBTBase>{
 	public static void syncCapabilities(EntityPlayer player){
 		IPlayerMush mush = player.getCapability(PlayerMushProvider.MUSH_CAP, null);
 		PacketCapabilitiesMushPowers packetCapabilities = new PacketCapabilitiesMushPowers(mush);
-		if(!player.field_70170_p.field_72995_K && player instanceof EntityPlayerMP)
+		if(!player.world.isRemote && player instanceof EntityPlayerMP)
 			MushPowers.network.sendTo(packetCapabilities, (EntityPlayerMP) player);
 	}
 	
@@ -97,13 +97,13 @@ public class PlayerMushProvider implements ICapabilitySerializable<NBTBase>{
 	
 	public static void sendSquidPacket(EntityPlayer player, boolean isSquid){
 		PacketSquidPlayer packetSquids = new PacketSquidPlayer(player.getDisplayNameString(), isSquid);
-		if(!player.field_70170_p.field_72995_K && player instanceof EntityPlayerMP)
+		if(!player.world.isRemote && player instanceof EntityPlayerMP)
 			MushPowers.network.sendToAll(packetSquids);
 	}
 	
 	public static void sendGhostPacket(EntityPlayer player, boolean isGhost){
 		PacketGhostPlayer packet = new PacketGhostPlayer(player.getDisplayNameString(), isGhost);
-		if(!player.field_70170_p.field_72995_K && player instanceof EntityPlayerMP)
+		if(!player.world.isRemote && player instanceof EntityPlayerMP)
 			MushPowers.network.sendToAll(packet);
 	}
 

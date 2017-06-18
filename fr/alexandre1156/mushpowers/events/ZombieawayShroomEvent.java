@@ -27,11 +27,11 @@ public class ZombieawayShroomEvent extends ShroomEvent {
 	protected void onEntityJoinWorld(Entity entity, World world) {
 		if (entity instanceof EntityZombie) {
 			EntityZombie zombie = (EntityZombie) entity;
-			Iterator<EntityAITaskEntry> iter = zombie.field_70715_bh.field_75782_a.iterator();
+			Iterator<EntityAITaskEntry> iter = zombie.targetTasks.taskEntries.iterator();
 			while(iter.hasNext()){
 				EntityAITaskEntry ai = iter.next();
-				if(ai.field_75733_a instanceof EntityAINearestAttackableTarget){
-					Class<EntityLivingBase> target = ObfuscationReflectionHelper.getPrivateValue(EntityAINearestAttackableTarget.class, (EntityAINearestAttackableTarget) ai.field_75733_a, 0);
+				if(ai.action instanceof EntityAINearestAttackableTarget){
+					Class<EntityLivingBase> target = ObfuscationReflectionHelper.getPrivateValue(EntityAINearestAttackableTarget.class, (EntityAINearestAttackableTarget) ai.action, 0);
 					if(target.isAssignableFrom(EntityPlayer.class)){
 						iter.remove();
 						break;
@@ -39,7 +39,7 @@ public class ZombieawayShroomEvent extends ShroomEvent {
 				}
 			}
 			
-			zombie.field_70714_bg.func_75776_a(1, new EntityAIAvoidEntity(zombie, EntityPlayer.class, new Predicate<Entity>() {
+			zombie.tasks.addTask(1, new EntityAIAvoidEntity(zombie, EntityPlayer.class, new Predicate<Entity>() {
 
 				@Override
 				public boolean apply(Entity input) {
@@ -58,11 +58,11 @@ public class ZombieawayShroomEvent extends ShroomEvent {
 		if(entLiv instanceof EntityPlayer){
 			EntityPlayer p = (EntityPlayer) entLiv;
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			if(mush.isZombieAway() && !p.field_70170_p.field_72995_K){
+			if(mush.isZombieAway() && !p.world.isRemote){
 				if(mush.getCooldown(MainMushPowers.ZOMBIEAWAY) % 1200 == 0)
-					p.func_146105_b(new TextComponentTranslation("zombierunaway.time.left.min", (mush.getCooldown(MainMushPowers.ZOMBIEAWAY)/1200)).func_150255_a(new Style().func_150238_a(TextFormatting.AQUA)), true);
+					p.sendStatusMessage(new TextComponentTranslation("zombierunaway.time.left.min", (mush.getCooldown(MainMushPowers.ZOMBIEAWAY)/1200)).setStyle(new Style().setColor(TextFormatting.AQUA)), true);
 				else if(mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 600 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 200 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 180 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 160 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 140 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 120 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 100 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 80 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 60 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 40 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 20)
-					p.func_146105_b(new TextComponentTranslation("zombierunaway.time.left.sec", (mush.getCooldown(MainMushPowers.ZOMBIEAWAY)/20)).func_150255_a(new Style().func_150238_a(TextFormatting.DARK_AQUA)), true);
+					p.sendStatusMessage(new TextComponentTranslation("zombierunaway.time.left.sec", (mush.getCooldown(MainMushPowers.ZOMBIEAWAY)/20)).setStyle(new Style().setColor(TextFormatting.DARK_AQUA)), true);
 				if(mush.getCooldown(MainMushPowers.ZOMBIEAWAY) <= 0) {
 					mush.setCooldown(MainMushPowers.ZOMBIEAWAY, (short) MushConfig.cooldownZombieAway);
 					mush.setZombieAway(false);

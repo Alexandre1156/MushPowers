@@ -13,24 +13,24 @@ public class PlayerMushStorage implements IStorage<IPlayerMush>{
 	@Override
 	public NBTBase writeNBT(Capability<IPlayerMush> capability, IPlayerMush instance, EnumFacing side) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.func_74757_a("isSquid", instance.isSquid());
-		nbt.func_74768_a("squidAir", instance.getSquidAir());
-		nbt.func_74777_a("squidCooldown", instance.getCooldown(MainMushPowers.SQUID));
-		nbt.func_74774_a("numberShroomEaten", instance.getShroomCount());
-		nbt.func_74757_a("zombieRunAway", instance.isZombieAway());
-		nbt.func_74777_a("zombieRunAwayCooldown", instance.getCooldown(MainMushPowers.ZOMBIEAWAY));
-		nbt.func_74757_a("hostile", instance.isHostile());
-		nbt.func_74777_a("hostileCooldown", instance.getCooldown(MainMushPowers.HOSTILE));
-		nbt.func_74757_a("chicken", instance.isChicken());
-		nbt.func_74777_a("chickenCooldown", instance.getCooldown(MainMushPowers.CHICKEN));
-		nbt.func_74757_a("ghost", instance.isGhost());
-		nbt.func_74777_a("ghostCooldown", instance.getCooldown(MainMushPowers.GHOST));
-		nbt.func_74757_a("electric", instance.isElectric());
-		nbt.func_74777_a("electricCooldown", instance.getCooldown(MainMushPowers.ELECTRIC));
-		nbt.func_74776_a("shieldDamage", instance.getShieldDamage());
-		nbt.func_74757_a("fly", instance.isFlying());
-		nbt.func_74777_a("flyCooldown", instance.getCooldown(MainMushPowers.FLY));
-		nbt.func_74774_a("repairCost", instance.getRepairCostLeft());
+		nbt.setBoolean("isSquid", instance.isSquid());
+		nbt.setInteger("squidAir", instance.getSquidAir());
+		nbt.setShort("squidCooldown", instance.getCooldown(MainMushPowers.SQUID));
+		nbt.setByte("numberShroomEaten", instance.getShroomCount());
+		nbt.setBoolean("zombieRunAway", instance.isZombieAway());
+		nbt.setShort("zombieRunAwayCooldown", instance.getCooldown(MainMushPowers.ZOMBIEAWAY));
+		nbt.setBoolean("hostile", instance.isHostile());
+		nbt.setShort("hostileCooldown", instance.getCooldown(MainMushPowers.HOSTILE));
+		nbt.setBoolean("chicken", instance.isChicken());
+		nbt.setShort("chickenCooldown", instance.getCooldown(MainMushPowers.CHICKEN));
+		nbt.setBoolean("ghost", instance.isGhost());
+		nbt.setShort("ghostCooldown", instance.getCooldown(MainMushPowers.GHOST));
+		nbt.setBoolean("electric", instance.isElectric());
+		nbt.setShort("electricCooldown", instance.getCooldown(MainMushPowers.ELECTRIC));
+		nbt.setFloat("shieldDamage", instance.getShieldDamage());
+		nbt.setBoolean("fly", instance.isFlying());
+		nbt.setShort("flyCooldown", instance.getCooldown(MainMushPowers.FLY));
+		nbt.setByte("repairCost", instance.getRepairCostLeft());
 		return nbt;
 	}
 
@@ -39,24 +39,24 @@ public class PlayerMushStorage implements IStorage<IPlayerMush>{
 		if(nbt instanceof NBTTagByte) return;
 		if(nbt instanceof NBTTagCompound){
 			NBTTagCompound nbtTag = (NBTTagCompound) nbt;
-			instance.setSquid(nbtTag.func_74767_n("isSquid"));
-			instance.setSquidAir(nbtTag.func_74762_e("squidAir"));
-			instance.setCooldown(MainMushPowers.SQUID, nbtTag.func_74765_d("squidCooldown"));
-			instance.setShroomCount(nbtTag.func_74771_c("numberShroomEaten"));
-			instance.setZombieAway(nbtTag.func_74767_n("zombieRunAway"));
-			instance.setCooldown(MainMushPowers.ZOMBIEAWAY, nbtTag.func_74765_d("zombieRunAwayCooldown"));
-			instance.setHostile(nbtTag.func_74767_n("hostile"));
-			instance.setCooldown(MainMushPowers.HOSTILE, nbtTag.func_74765_d("hostileCooldown"));
-			instance.setGhost(nbtTag.func_74767_n("ghost"));
-			instance.setCooldown(MainMushPowers.GHOST, nbtTag.func_74765_d("ghostCooldown"));
-			instance.setChicken(nbtTag.func_74767_n("chicken"));
-			instance.setCooldown(MainMushPowers.CHICKEN, nbtTag.func_74765_d("chickenCooldown"));
-			instance.setElectric(nbtTag.func_74767_n("electric"));
-			instance.setCooldown(MainMushPowers.ELECTRIC, nbtTag.func_74765_d("electricCooldown"));
-			instance.setShieldDamageAbsorb(nbtTag.func_74760_g("shieldDamage"));
-			instance.setFly(nbtTag.func_74767_n("fly"));
-			instance.setCooldown(MainMushPowers.FLY, nbtTag.func_74765_d("flyCooldown"));
-			instance.setLowerRepairCost(nbtTag.func_74771_c("repairCost"));
+			instance.setSquid(nbtTag.getBoolean("isSquid"));
+			instance.setSquidAir(nbtTag.getInteger("squidAir"));
+			instance.setCooldown(MainMushPowers.SQUID, nbtTag.getShort("squidCooldown"));
+			instance.setShroomCount(nbtTag.getByte("numberShroomEaten"));
+			instance.setZombieAway(nbtTag.getBoolean("zombieRunAway"));
+			instance.setCooldown(MainMushPowers.ZOMBIEAWAY, nbtTag.getShort("zombieRunAwayCooldown"));
+			instance.setHostile(nbtTag.getBoolean("hostile"));
+			instance.setCooldown(MainMushPowers.HOSTILE, nbtTag.getShort("hostileCooldown"));
+			instance.setGhost(nbtTag.getBoolean("ghost"));
+			instance.setCooldown(MainMushPowers.GHOST, nbtTag.getShort("ghostCooldown"));
+			instance.setChicken(nbtTag.getBoolean("chicken"));
+			instance.setCooldown(MainMushPowers.CHICKEN, nbtTag.getShort("chickenCooldown"));
+			instance.setElectric(nbtTag.getBoolean("electric"));
+			instance.setCooldown(MainMushPowers.ELECTRIC, nbtTag.getShort("electricCooldown"));
+			instance.setShieldDamageAbsorb(nbtTag.getFloat("shieldDamage"));
+			instance.setFly(nbtTag.getBoolean("fly"));
+			instance.setCooldown(MainMushPowers.FLY, nbtTag.getShort("flyCooldown"));
+			instance.setLowerRepairCost(nbtTag.getByte("repairCost"));
 		}
 	}
 

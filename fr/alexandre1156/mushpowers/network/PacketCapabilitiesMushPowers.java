@@ -101,11 +101,11 @@ public class PacketCapabilitiesMushPowers implements IMessage{
 
 		@Override
 		public IMessage onMessage(final PacketCapabilitiesMushPowers message, MessageContext ctx) {
-				Minecraft.func_71410_x().func_152344_a(new Runnable(){
+				Minecraft.getMinecraft().addScheduledTask(new Runnable(){
 
 					@Override
 					public void run() {
-						IPlayerMush mush = Minecraft.func_71410_x().field_71439_g.getCapability(PlayerMushProvider.MUSH_CAP, null);
+						IPlayerMush mush = Minecraft.getMinecraft().player.getCapability(PlayerMushProvider.MUSH_CAP, null);
 						mush.setSquid(message.isSquid);
 						mush.setSquidAir(message.squidAir);
 						mush.setCooldown(MainMushPowers.SQUID, message.squidTimeLeft);

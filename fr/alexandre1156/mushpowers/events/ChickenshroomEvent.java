@@ -15,22 +15,18 @@ public class ChickenshroomEvent extends ShroomEvent {
 	
 	@Override
 	protected void onTickPlayer(EntityPlayer p, Phase phase, Side side) {
-		IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-		if(mush.isChicken() && side.isClient()){
-			if(p.field_70181_x < 0.0D && !p.field_70122_E) 
-				p.field_70181_x *= 0.77D;
-			p.field_70159_w *= 0.8D;
-			p.field_70179_y *= 0.8D;
+		if(side.isClient() && p.getCapability(PlayerMushProvider.MUSH_CAP, null).isChicken()){
+			if(p.motionY < 0.0D && !p.onGround) 
+				p.motionY *= 0.77D;
+			p.motionX *= 0.8D;
+			p.motionZ *= 0.8D;
 		}
 	}
 	
 	@Override
 	public boolean onLivingEntityFall(Entity ent, EntityLivingBase entLiv, float distance, float damageMultiplier) {
-		if(entLiv instanceof EntityPlayer && !entLiv.field_70170_p.field_72995_K){
-			EntityPlayer p = (EntityPlayer) entLiv;
-			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			if(mush.isChicken()) return true;
-		}
+		if(!entLiv.world.isRemote)
+			return true;
 		return super.onLivingEntityFall(ent, entLiv, distance, damageMultiplier);
 	}
 	
@@ -46,22 +42,20 @@ public class ChickenshroomEvent extends ShroomEvent {
 	
 	@Override
 	protected void onLivingUpdate(Entity ent, EntityLivingBase entLiv) {
-		if(ent instanceof EntityPlayer && !ent.field_70170_p.field_72995_K){
+		if(ent instanceof EntityPlayer && !ent.world.isRemote){
 			EntityPlayer p = (EntityPlayer) ent;
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			if(mush.isChicken()){
-				if(mush.getCooldown(MainMushPowers.CHICKEN) % 1200 == 0)
-					p.func_146105_b(new TextComponentTranslation("chicken.time.left.min", (mush.getCooldown(MainMushPowers.CHICKEN)/1200)), true);
-				else if(mush.getCooldown(MainMushPowers.CHICKEN) == 600 || mush.getCooldown(MainMushPowers.CHICKEN) == 200 || mush.getCooldown(MainMushPowers.CHICKEN) == 180 || mush.getCooldown(MainMushPowers.CHICKEN) == 160 || mush.getCooldown(MainMushPowers.CHICKEN) == 140 || mush.getCooldown(MainMushPowers.CHICKEN) == 120 || mush.getCooldown(MainMushPowers.CHICKEN) == 100 || mush.getCooldown(MainMushPowers.CHICKEN) == 80 || mush.getCooldown(MainMushPowers.CHICKEN) == 60 || mush.getCooldown(MainMushPowers.CHICKEN) == 40 || mush.getCooldown(MainMushPowers.CHICKEN) == 20)
-					p.func_146105_b(new TextComponentTranslation("chicken.time.left.sec", (mush.getCooldown(MainMushPowers.CHICKEN)/20)), true);
-				if(mush.getCooldown(MainMushPowers.CHICKEN) <= 0) {
-					mush.setCooldown(MainMushPowers.CHICKEN, (short) MushConfig.cooldownChicken);
-					mush.setChicken(false);
-					PlayerMushProvider.syncCapabilities(p);
-					return;
-				}
-				mush.setCooldown(MainMushPowers.CHICKEN, (short) (mush.getCooldown(MainMushPowers.CHICKEN)-1));
+			if(mush.getCooldown(MainMushPowers.CHICKEN) % 1200 == 0)
+				p.sendStatusMessage(new TextComponentTranslation("chicken.time.left.min", (mush.getCooldown(MainMushPowers.CHICKEN)/1200)), true);
+			else if(mush.getCooldown(MainMushPowers.CHICKEN) == 600 || mush.getCooldown(MainMushPowers.CHICKEN) == 200 || mush.getCooldown(MainMushPowers.CHICKEN) == 180 || mush.getCooldown(MainMushPowers.CHICKEN) == 160 || mush.getCooldown(MainMushPowers.CHICKEN) == 140 || mush.getCooldown(MainMushPowers.CHICKEN) == 120 || mush.getCooldown(MainMushPowers.CHICKEN) == 100 || mush.getCooldown(MainMushPowers.CHICKEN) == 80 || mush.getCooldown(MainMushPowers.CHICKEN) == 60 || mush.getCooldown(MainMushPowers.CHICKEN) == 40 || mush.getCooldown(MainMushPowers.CHICKEN) == 20)
+				p.sendStatusMessage(new TextComponentTranslation("chicken.time.left.sec", (mush.getCooldown(MainMushPowers.CHICKEN)/20)), true);
+			if(mush.getCooldown(MainMushPowers.CHICKEN) <= 0) {
+				mush.setCooldown(MainMushPowers.CHICKEN, (short) MushConfig.cooldownChicken);
+				mush.setChicken(false);
+				PlayerMushProvider.syncCapabilities(p);
+				return;
 			}
+			mush.setCooldown(MainMushPowers.CHICKEN, (short) (mush.getCooldown(MainMushPowers.CHICKEN)-1));
 		}
 	}
 	

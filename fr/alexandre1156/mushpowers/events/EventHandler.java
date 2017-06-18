@@ -15,7 +15,6 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -41,10 +40,8 @@ public class EventHandler {
 	
 	@SubscribeEvent
 	public void playerClone(PlayerEvent.Clone e){
-		for(int i = 0; i < shrooms.size(); i++) {
-			if(predicates.get(i).apply(e.getEntityPlayer()))
-				shrooms.get(i).onPlayerCloned(e.getEntityPlayer(), e.getOriginal(), e.isWasDeath());
-		}
+		for(int i = 0; i < shrooms.size(); i++) 
+			shrooms.get(i).onPlayerCloned(e.getEntityPlayer(), e.getOriginal(), e.isWasDeath());
 		if (e.isWasDeath()) {
 			PlayerMushProvider.resetPlayer(e.getEntityPlayer(), false);
 			PlayerMushProvider.syncCapabilities(e.getEntityPlayer());
@@ -55,7 +52,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void renderGameOverlayPre(RenderGameOverlayEvent.Pre e){
 		for(int i = 0; i < shrooms.size(); i++){
-			if(predicates.get(i).apply(Minecraft.func_71410_x().field_71439_g)) {
+			if(predicates.get(i).apply(Minecraft.getMinecraft().player)) {
 				boolean canceled = shrooms.get(i).onRenderGameOverlayPre(e.getType());
 				if(canceled) e.setCanceled(true);
 			}
@@ -72,18 +69,16 @@ public class EventHandler {
 	
 	@SubscribeEvent
 	public void playerIteractItemRightClickItem(PlayerInteractEvent.RightClickItem e){
-		for(int i = 0; i < shrooms.size(); i++) {
-			if(predicates.get(i).apply(e.getEntityPlayer()))
-				shrooms.get(i).onPlayerIteractItemRightClickItem(e.getEntityPlayer(), e.getWorld(), e.getItemStack());
-		}
+		for(int i = 0; i < shrooms.size(); i++) 
+			shrooms.get(i).onPlayerIteractItemRightClickItem(e.getEntityPlayer(), e.getWorld(), e.getItemStack());
 	}
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void renderGameOverlayEventPost(RenderGameOverlayEvent.Post e){
 		for(int i = 0; i < shrooms.size(); i++) {
-			if(predicates.get(i).apply(Minecraft.func_71410_x().field_71439_g))
-			shrooms.get(i).onRenderGameOverlayPost(e.getResolution(), e.getType());
+			if(predicates.get(i).apply(Minecraft.getMinecraft().player))
+				shrooms.get(i).onRenderGameOverlayPost(e.getResolution(), e.getType());
 		}
 	}
 	
@@ -91,18 +86,15 @@ public class EventHandler {
 	@SubscribeEvent
 	public void renderLivingSpecialsPre(RenderLivingEvent.Specials.Pre<EntityPlayer> e){
 		for(int i = 0; i < shrooms.size(); i++){
-			if(predicates.get(i).apply(Minecraft.func_71410_x().field_71439_g)) {
-				boolean canceled = shrooms.get(i).onRenderLivingSpecialsPre(e.getEntity());
-				if(canceled) e.setCanceled(true);
-			}
+			boolean canceled = shrooms.get(i).onRenderLivingSpecialsPre(e.getEntity());
+			if(canceled) e.setCanceled(true);
 		}
 	}
 	
 	@SubscribeEvent
 	public void tickPlayer(TickEvent.PlayerTickEvent e){
 		for(int i = 0; i < shrooms.size(); i++) {
-			if(predicates.get(i).apply(e.player))
-				shrooms.get(i).onTickPlayer(e.player, e.phase, e.side);
+			shrooms.get(i).onTickPlayer(e.player, e.phase, e.side);
 		}
 	}
 	
@@ -118,7 +110,6 @@ public class EventHandler {
 	@SubscribeEvent
 	public void renderPlayerPre(RenderPlayerEvent.Pre e){
 		for(int i = 0; i < shrooms.size(); i++){
-			//if(predicates.get(i).apply(e.getEntityPlayer()))
 			boolean canceled = shrooms.get(i).onRenderPlayerPre(e.getEntityPlayer(), e.getPartialRenderTick(), e.getX(), e.getY(), e.getZ(), e.getRenderer());
 			if(canceled) e.setCanceled(true);
 		}
@@ -139,7 +130,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void livingEntityUseItemFinish(LivingEntityUseItemEvent.Finish e){
 		for(int i = 0; i < shrooms.size(); i++)
-			shrooms.get(i).onLivingEntityUseItemFinish(e.getEntityLiving(), e.getItem(), e.getEntityLiving().func_130014_f_());
+			shrooms.get(i).onLivingEntityUseItemFinish(e.getEntityLiving(), e.getItem(), e.getEntityLiving().getEntityWorld());
 	}
 	
 	@SubscribeEvent
@@ -195,21 +186,21 @@ public class EventHandler {
 		}
 	}
 	
-	@SubscribeEvent
-	public void enchantementLevelSet(EnchantmentLevelSetEvent e){
-		for(int i = 0; i < shrooms.size(); i++) {
-			int level = shrooms.get(i).onEnchantementLevelSet(e.getEnchantRow(), e.getItem(), e.getLevel(), e.getWorld(), e.getPower(), e.getOriginalLevel());
-			e.setLevel(level);
-		}
-//		System.out.println("ENCHANTEMENT : "+e.getEnchantRow()+" - "+e.getLevel()+" - "+e.getOriginalLevel()+" - "+e.getPower()+" - "+e.getItem());
-//		e.setLevel(e.getLevel()/4);
-	}
+//	@SubscribeEvent
+//	public void enchantementLevelSet(EnchantmentLevelSetEvent e){
+//		for(int i = 0; i < shrooms.size(); i++) {
+//			int level = shrooms.get(i).onEnchantementLevelSet(e.getEnchantRow(), e.getItem(), e.getLevel(), e.getWorld(), e.getPower(), e.getOriginalLevel());
+//			e.setLevel(level);
+//		}
+////		System.out.println("ENCHANTEMENT : "+e.getEnchantRow()+" - "+e.getLevel()+" - "+e.getOriginalLevel()+" - "+e.getPower()+" - "+e.getItem());
+////		e.setLevel(e.getLevel()/4);
+//	}
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void drawGuiScreen(GuiScreenEvent.DrawScreenEvent e){
 		for(int i = 0; i < shrooms.size(); i++) {
-			if(predicates.get(i).apply(Minecraft.func_71410_x().field_71439_g))
+			if(predicates.get(i).apply(Minecraft.getMinecraft().player))
 				shrooms.get(i).onDrawScreen(e.getGui(), e.getMouseX(), e.getMouseY(), e.getRenderPartialTicks());
 		}
 	}

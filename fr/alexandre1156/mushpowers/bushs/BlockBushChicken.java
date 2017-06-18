@@ -9,7 +9,7 @@ public class BlockBushChicken extends BushMush {
 	public BlockBushChicken() {
 		super(CommonProxy.itemChickenshroom);
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "bushchicken"));
-		this.func_149663_c("bushchicken");
+		this.setUnlocalizedName("bushchicken");
 	}
 	
 }

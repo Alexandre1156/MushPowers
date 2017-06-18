@@ -22,17 +22,17 @@ import net.minecraft.world.World;
 public class BlockMushPowersPowerInjector extends Block implements ITileEntityProvider {
 
 	public BlockMushPowersPowerInjector() {
-		super(Material.field_151576_e);
-		this.func_149663_c("mppi");
+		super(Material.ROCK);
+		this.setUnlocalizedName("mppi");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "mppi"));
-		this.func_149711_c(2f);
-		this.func_149752_b(2f);
-		this.func_149647_a(CreativeTabs.field_78026_f);
+		this.setHardness(2f);
+		this.setResistance(2f);
+		this.setCreativeTab(CreativeTabs.MISC);
 	}
 
 	@Override
-	public Item func_180660_a(IBlockState state, Random rand, int fortune) {
-		return Item.func_150898_a(this);
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		return Item.getItemFromBlock(this);
 	}
 
 	@Override
@@ -41,27 +41,27 @@ public class BlockMushPowersPowerInjector extends Block implements ITileEntityPr
 	}
 
 	@Override
-	public boolean func_180639_a(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (!worldIn.field_72995_K)
-			playerIn.openGui(MushPowers.instance, 0, worldIn, pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p());
+		if (!worldIn.isRemote)
+			playerIn.openGui(MushPowers.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		return true;
 	}
 
 	@Override
-	public TileEntity func_149915_a(World worldIn, int meta) {
+	public TileEntity createNewTileEntity(World worldIn, int meta) {
 		return new TileEntityMushPowersPowerInjector();
 	}
 
 	@Override
-	public void func_180663_b(World worldIn, BlockPos pos, IBlockState state) {
-		TileEntity tileentity = worldIn.func_175625_s(pos);
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		TileEntity tileentity = worldIn.getTileEntity(pos);
 		if (tileentity instanceof TileEntityMushPowersPowerInjector){
 			TileEntityMushPowersPowerInjector te = (TileEntityMushPowersPowerInjector) tileentity;
 			for(int i = 0; i < te.getItems().size(); i++)
-				InventoryHelper.func_180173_a(worldIn, pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p(), te.getItems().get(i));
+				InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), te.getItems().get(i));
 		}
-		super.func_180663_b(worldIn, pos, state);
+		super.breakBlock(worldIn, pos, state);
 	}
 
 }

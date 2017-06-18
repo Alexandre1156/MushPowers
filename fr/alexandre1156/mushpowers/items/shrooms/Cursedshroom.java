@@ -27,43 +27,43 @@ public class Cursedshroom extends ItemFood {
 	
 	public Cursedshroom() {
 		super(1, 0.0f, false);
-		this.func_77655_b("cursedshroom");
+		this.setUnlocalizedName("cursedshroom");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "cursedshroom"));
-		this.func_77637_a(CreativeTabs.field_78039_h);
-		this.func_77848_i();
+		this.setCreativeTab(CreativeTabs.FOOD);
+		this.setAlwaysEdible();
 	}
 	
 	@Override
-	protected void func_77849_c(ItemStack stack, World worldIn, EntityPlayer player) {
-		if(!worldIn.field_72995_K) {
-			int duration = this.field_77697_d.nextInt(2)+1 * 200;
-			int level = this.field_77697_d.nextInt(1);
-			player.func_70690_d(new PotionEffect(MobEffects.field_76431_k, duration, level));
-			player.func_70690_d(new PotionEffect(MobEffects.field_76440_q, duration, level));
-			player.func_70690_d(new PotionEffect(MobEffects.field_76436_u, duration, level));
+	protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
+		if(!worldIn.isRemote) {
+			int duration = this.itemRand.nextInt(2)+1 * 200;
+			int level = this.itemRand.nextInt(1);
+			player.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, duration, level));
+			player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, duration, level));
+			player.addPotionEffect(new PotionEffect(MobEffects.POISON, duration, level));
 		}
 	}
 	
 	@Override
-	public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		tooltip.add(ChatFormatting.WHITE+"Adds 3 negatives effects with random amplifier and duration when eat.\nShift + Left Click to transform to a Bad Regenshroom.");
 		if(MushConfig.isMushPowersDesactived(this))
 			tooltip.add(ChatFormatting.RED+"THIS SHROOM IS DESACTIVED");
 	}
 	
 	@Override
-	public ActionResult<ItemStack> func_77659_a(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		if(MushConfig.isMushPowersDesactived(this))
-			return new ActionResult(EnumActionResult.FAIL, playerIn.func_184586_b(handIn));
-		if(Keyboard.isKeyDown(Minecraft.func_71410_x().field_71474_y.field_74311_E.func_151463_i())){
-			ItemStack itemstack = playerIn.func_184586_b(handIn);
-			ItemStack regenshroom = new ItemStack(CommonProxy.itemRegenshroom, itemstack.func_190916_E());
+			return new ActionResult(EnumActionResult.FAIL, playerIn.getHeldItem(handIn));
+		if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())){
+			ItemStack itemstack = playerIn.getHeldItem(handIn);
+			ItemStack regenshroom = new ItemStack(CommonProxy.itemRegenshroom, itemstack.getCount());
 			regenshroom.getCapability(RegenProvider.REGEN_CAP, null).setBad(true);
 			//((Regenshroom) regenshroom.getItem()).setBad();
-			playerIn.func_184611_a(handIn, regenshroom);
+			playerIn.setHeldItem(handIn, regenshroom);
 			return new ActionResult(EnumActionResult.FAIL, itemstack);
 		} else
-			return super.func_77659_a(worldIn, playerIn, handIn);
+			return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
 	

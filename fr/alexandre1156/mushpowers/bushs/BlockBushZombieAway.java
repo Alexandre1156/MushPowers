@@ -9,7 +9,7 @@ public class BlockBushZombieAway extends BushMush {
 	public BlockBushZombieAway() {
 		super(CommonProxy.itemZombieawayShroom);
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "bushzombieaway"));
-		this.func_149663_c("bushzombieaway");
+		this.setUnlocalizedName("bushzombieaway");
 	}
 	
 }

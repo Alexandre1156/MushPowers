@@ -22,32 +22,32 @@ public class Pizzashroom extends ItemFood {
 
 	public Pizzashroom() {
 		super(2, 1.2f, false);
-		this.func_77655_b("pizzashroom");
+		this.setUnlocalizedName("pizzashroom");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "pizzashroom"));
-		this.func_77637_a(CreativeTabs.field_78039_h);
-		this.func_77848_i();
+		this.setCreativeTab(CreativeTabs.FOOD);
+		this.setAlwaysEdible();
 	}
 
 	@Override
-	protected void func_77849_c(ItemStack stack, World worldIn, EntityPlayer player) {
+	protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
 		IPlayerMush mush = player.getCapability(PlayerMushProvider.MUSH_CAP, null);
-		if(!worldIn.field_72995_K){
+		if(!worldIn.isRemote){
 			mush.setShroomCount((byte) MushConfig.foodCountPizzashroom);
 			PlayerMushProvider.syncCapabilities(player);
 		}
 	}
 	
 	@Override
-	public ActionResult<ItemStack> func_77659_a(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		ItemStack itemstack = playerIn.func_184586_b(handIn);
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+		ItemStack itemstack = playerIn.getHeldItem(handIn);
 		if(MushConfig.isMushPowersDesactived(this))
 			return new ActionResult(EnumActionResult.FAIL, itemstack);
 		else
-			return super.func_77659_a(worldIn, playerIn, handIn);
+			return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
 	@Override
-	public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		tooltip.add(ChatFormatting.WHITE+"Each food you eat will restore "+MushConfig.foodRegenPizzashroom+" more half-hunger point.");
 		tooltip.add(ChatFormatting.GREEN+""+ChatFormatting.BOLD+"Lasts after eating "+MushConfig.foodCountPizzashroom+" foods");
 		if(MushConfig.isMushPowersDesactived(this))

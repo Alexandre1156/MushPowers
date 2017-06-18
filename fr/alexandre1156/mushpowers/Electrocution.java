@@ -28,8 +28,8 @@ public class Electrocution extends EntityDamageSourceIndirect {
 //    }
 	
 	@Override
-	public ITextComponent func_151519_b(EntityLivingBase entityLivingBaseIn) {
-		return new TextComponentTranslation("electrocution.death.message", entityLivingBaseIn.func_70005_c_());
+	public ITextComponent getDeathMessage(EntityLivingBase entityLivingBaseIn) {
+		return new TextComponentTranslation("electrocution.death.message", entityLivingBaseIn.getName());
 	}
 
 }

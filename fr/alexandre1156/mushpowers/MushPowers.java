@@ -44,12 +44,12 @@ public class MushPowers {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		proxy.preInit(event);
-		this.squidPlayers = Maps.newHashMap();
-		this.ghostPlayers = Maps.newHashMap();
 		MushConfig.config = new Configuration(event.getSuggestedConfigurationFile());
 		MushConfig.config.load();
 		MushConfig.syncConfig();
+		proxy.preInit(event);
+		this.squidPlayers = Maps.newHashMap();
+		this.ghostPlayers = Maps.newHashMap();
 	}
 
 	@EventHandler
@@ -62,7 +62,7 @@ public class MushPowers {
 		this.network.registerMessage(PacketGhostPlayersList.Handler.class, PacketGhostPlayersList.class, 1, Side.CLIENT);
 		this.network.registerMessage(PacketGhostPlayer.Handler.class, PacketGhostPlayer.class, 0, Side.CLIENT);
 		GameRegistry.addRecipe(new ItemStack(CommonProxy.blockMPPI), new Object[] {
-				" G ", "RBR", " F ", 'G', Items.field_151069_bo, 'R', Blocks.field_150337_Q, 'B', Items.field_151067_bt, 'F', Items.field_151072_bj
+				" G ", "RBR", " F ", 'G', Items.GLASS_BOTTLE, 'R', Blocks.RED_MUSHROOM, 'B', Items.BREWING_STAND, 'F', Items.BLAZE_ROD
 		});
 		GameRegistry.registerWorldGenerator(new StructureMushPowerGenerator(), 100);
 	}

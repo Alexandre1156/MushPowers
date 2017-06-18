@@ -18,18 +18,18 @@ public class SlotMPPIInputUp extends SlotItemHandler{
 	}
 	
 	@Override
-	public boolean func_75214_a(ItemStack stack) {
-		boolean valid = stack.func_77969_a(new ItemStack(Blocks.field_150337_Q));
+	public boolean isItemValid(ItemStack stack) {
+		boolean valid = stack.isItemEqual(new ItemStack(Blocks.RED_MUSHROOM));
 		if(valid)
 			this.te.setConsumingUp(true);
 		return valid;
 	}
 	
 	@Override
-	public ItemStack func_190901_a(EntityPlayer thePlayer, ItemStack stack) {
+	public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
 		this.te.setConsumingUp(false);
 		this.te.setCooldownUp(0);
-		return super.func_190901_a(thePlayer, stack);
+		return super.onTake(thePlayer, stack);
 	}
 	
 

@@ -9,7 +9,7 @@ public class BlockBushPizza extends BushMush {
 	public BlockBushPizza() {
 		super(CommonProxy.itemPizzashroom);
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "bushpizza"));
-		this.func_149663_c("bushpizza");
+		this.setUnlocalizedName("bushpizza");
 	}
 	
 }

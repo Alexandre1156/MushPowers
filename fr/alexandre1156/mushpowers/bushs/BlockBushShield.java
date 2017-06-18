@@ -9,7 +9,7 @@ public class BlockBushShield extends BushMush {
 	public BlockBushShield() {
 		super(CommonProxy.itemShieldshroom);
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "bushshield"));
-		this.func_149663_c("bushshield");
+		this.setUnlocalizedName("bushshield");
 	}
 	
 }

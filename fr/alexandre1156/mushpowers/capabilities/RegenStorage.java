@@ -11,14 +11,14 @@ public class RegenStorage implements IStorage<IRegen> {
 	@Override
 	public NBTBase writeNBT(Capability<IRegen> capability, IRegen instance, EnumFacing side) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.func_74757_a("bad", instance.isBad());
+		nbt.setBoolean("bad", instance.isBad());
 		return nbt;
 	}
 
 	@Override
 	public void readNBT(Capability<IRegen> capability, IRegen instance, EnumFacing side, NBTBase nbt) {
 		NBTTagCompound nbtTag = (NBTTagCompound) nbt;
-		instance.setBad(nbtTag.func_74767_n("bad"));
+		instance.setBad(nbtTag.getBoolean("bad"));
 	}
 
 }

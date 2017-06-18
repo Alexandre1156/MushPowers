@@ -8,7 +8,7 @@ public class BlockBushHostile extends BushMush {
 
 	public BlockBushHostile() {
 		super(CommonProxy.itemHostileshroom);
-		this.func_149663_c("bushhostile");
+		this.setUnlocalizedName("bushhostile");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "bushhostile"));
 	}
 	

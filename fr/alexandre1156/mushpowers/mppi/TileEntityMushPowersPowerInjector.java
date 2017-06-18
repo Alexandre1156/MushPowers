@@ -43,7 +43,7 @@ public class TileEntityMushPowersPowerInjector extends TileEntity implements ICa
 		this.smeltResult = new ItemStack[CommonProxy.getBushs().size()];
 		for(int i = 0; i < smeltItems.length; i++){
 			BushMush bush = CommonProxy.getBushs().get(i);
-			this.smeltItems[i] = new ItemStack(Item.func_150898_a(bush));
+			this.smeltItems[i] = new ItemStack(Item.getItemFromBlock(bush));
 			this.smeltResult[i] = new ItemStack(bush.getMushPowerCorrespondence());
 		}
 //		this.smeltItems[0] = new ItemStack(Items.DYE, 1, 0);
@@ -58,54 +58,54 @@ public class TileEntityMushPowersPowerInjector extends TileEntity implements ICa
 	}
 
 	@Override
-	public void func_145839_a(NBTTagCompound compound) {
-		this.cooldownUp = compound.func_74762_e("CooldownUp");
-		this.isConsumingUp = compound.func_74767_n("ConsumingUp");
-		this.cooldownDown = compound.func_74762_e("CooldownDown");
-		this.isConsumingDown= compound.func_74767_n("ConsumingDown");
-		this.handler.deserializeNBT(compound.func_74775_l("ItemStackHandler"));
-		super.func_145839_a(compound);
+	public void readFromNBT(NBTTagCompound compound) {
+		this.cooldownUp = compound.getInteger("CooldownUp");
+		this.isConsumingUp = compound.getBoolean("ConsumingUp");
+		this.cooldownDown = compound.getInteger("CooldownDown");
+		this.isConsumingDown= compound.getBoolean("ConsumingDown");
+		this.handler.deserializeNBT(compound.getCompoundTag("ItemStackHandler"));
+		super.readFromNBT(compound);
 	}
 
 	@Override
-	public NBTTagCompound func_189515_b(NBTTagCompound compound) {
-		compound.func_74768_a("CooldownUp", this.cooldownUp);
-		compound.func_74768_a("CooldownDown", this.cooldownDown);
-		compound.func_74782_a("ItemStackHandler", this.handler.serializeNBT());
-		compound.func_74757_a("ConsumingDown", this.isConsumingDown);
-		compound.func_74757_a("ConsumingUp", this.isConsumingUp);
-		return super.func_189515_b(compound);
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		compound.setInteger("CooldownUp", this.cooldownUp);
+		compound.setInteger("CooldownDown", this.cooldownDown);
+		compound.setTag("ItemStackHandler", this.handler.serializeNBT());
+		compound.setBoolean("ConsumingDown", this.isConsumingDown);
+		compound.setBoolean("ConsumingUp", this.isConsumingUp);
+		return super.writeToNBT(compound);
 	}
 
 	@Override
-	public SPacketUpdateTileEntity func_189518_D_() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
-		this.func_189515_b(nbt);
-		int metadata = func_145832_p();
-		return new SPacketUpdateTileEntity(this.field_174879_c, metadata, nbt);
+		this.writeToNBT(nbt);
+		int metadata = getBlockMetadata();
+		return new SPacketUpdateTileEntity(this.pos, metadata, nbt);
 	}
 
 	@Override
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		this.func_145839_a(pkt.func_148857_g());
+		this.readFromNBT(pkt.getNbtCompound());
 	}
 
 	@Override
-	public NBTTagCompound func_189517_E_() {
+	public NBTTagCompound getUpdateTag() {
 		NBTTagCompound nbt = new NBTTagCompound();
-		this.func_189515_b(nbt);
+		this.writeToNBT(nbt);
 		return nbt;
 	}
 
 	@Override
 	public void handleUpdateTag(NBTTagCompound tag) {
-		this.func_145839_a(tag);
+		this.readFromNBT(tag);
 	}
 
 	@Override
 	public NBTTagCompound getTileData() {
 		NBTTagCompound nbt = new NBTTagCompound();
-		this.func_189515_b(nbt);
+		this.writeToNBT(nbt);
 		return nbt;
 	}
 
@@ -123,16 +123,16 @@ public class TileEntityMushPowersPowerInjector extends TileEntity implements ICa
 	
 	public boolean canBeSmelted(ItemStack is){
 		for(int i = 0; i < this.smeltItems.length; i++){
-			if(this.smeltItems[i].func_77973_b() == is.func_77973_b() && this.smeltItems[i].func_77960_j() == is.func_77960_j())
+			if(this.smeltItems[i].getItem() == is.getItem() && this.smeltItems[i].getMetadata() == is.getMetadata())
 				return true;
 		}
 		return false;
 	}
 	
 	public ItemStack smeltResult(ItemStack is){
-		ItemStack falseIS = Items.field_190931_a.func_190903_i();
+		ItemStack falseIS = Items.AIR.getDefaultInstance();
 		for(int i = 0; i < this.smeltResult.length; i++){
-			if(this.smeltItems[i].func_77973_b().equals(is.func_77973_b()))
+			if(this.smeltItems[i].getItem().equals(is.getItem()))
 				return this.smeltResult[i];
 		}
 		return falseIS;
@@ -141,7 +141,7 @@ public class TileEntityMushPowersPowerInjector extends TileEntity implements ICa
 	public ArrayList<ItemStack> getItems(){
 		ArrayList<ItemStack> items = Lists.newArrayList();
 		for(int i = 0; i < this.handler.getSlots(); i++){
-			if(!this.handler.getStackInSlot(i).func_190926_b())
+			if(!this.handler.getStackInSlot(i).isEmpty())
 				items.add(this.handler.getStackInSlot(i));
 		}
 		return items;
@@ -206,58 +206,58 @@ public class TileEntityMushPowersPowerInjector extends TileEntity implements ICa
 	public void smeltItemUp() {
 		if (this.consumeFinishedUp) {
 			this.consumeFinishedUp = false;
-			if(!(this.handler.getStackInSlot(0).func_190916_E() >= 2))
+			if(!(this.handler.getStackInSlot(0).getCount() >= 2))
 				this.isConsumingUp = false;
     		this.cooldownUp = 0;
 			ItemStack itemstack = this.handler.getStackInSlot(0);
 			ItemStack itemstack1 = this.handler.getStackInSlot(2);
 
-			if (itemstack1.func_190926_b()) 
+			if (itemstack1.isEmpty()) 
 				this.handler.setStackInSlot(2, new ItemStack(MushPowers.proxy.itemMushElexir));
 			else
-				itemstack1.func_190917_f(1);
+				itemstack1.grow(1);
 
-			if(itemstack1.func_190916_E() == 64)
+			if(itemstack1.getCount() == 64)
 				this.isConsumingUp = false;
-			itemstack.func_190918_g(1);
-			this.func_70296_d();
+			itemstack.shrink(1);
+			this.markDirty();
 		}
 	}
 	
 	public void smeltItemDown() {
 		if (this.consumeFinishedDown /*&& !this.world.isRemote*/){
 			this.consumeFinishedDown = false;
-			if(!(this.handler.getStackInSlot(1).func_190916_E() >= 2 && this.handler.getStackInSlot(4).func_190916_E() >= 2))
+			if(!(this.handler.getStackInSlot(1).getCount() >= 2 && this.handler.getStackInSlot(4).getCount() >= 2))
 				this.isConsumingDown = false;
     		this.cooldownDown = 0;
 			ItemStack inputSpecialItem = this.handler.getStackInSlot(1);
 			ItemStack output = this.handler.getStackInSlot(3);
 			ItemStack inputMushElixir = this.handler.getStackInSlot(4);
 			ItemStack result = this.smeltResult(inputSpecialItem);
-			if (output.func_190926_b()) 
-				this.handler.setStackInSlot(3, result.func_77946_l());
+			if (output.isEmpty()) 
+				this.handler.setStackInSlot(3, result.copy());
 			else
-				output.func_190917_f(1);
+				output.grow(1);
 
-			if(output.func_190916_E() == 64)
+			if(output.getCount() == 64)
 				this.isConsumingDown = false;
-			inputSpecialItem.func_190918_g(1);
-			inputMushElixir.func_190918_g(1);
-			this.func_70296_d();
+			inputSpecialItem.shrink(1);
+			inputMushElixir.shrink(1);
+			this.markDirty();
 		}
 	}
 
 	@Override
-	public void func_73660_a() {
+	public void update() {
 		//System.out.println(!this.handler.getStackInSlot(1).isEmpty()+" - "+(!MushConfig.isMushPowersDesactived(this.handler.getStackInSlot(1).getItem()))+" - "+(!this.handler.getStackInSlot(4).isEmpty())+" - "+(this.handler.getStackInSlot(3).getCount() < 64)+" - "+(!this.isConsumingDown)+" - ");
-		if(!this.handler.getStackInSlot(1).func_190926_b() && !MushConfig.isMushPowersDesactived(this.handler.getStackInSlot(1).func_77973_b()) && !this.handler.getStackInSlot(4).func_190926_b() && this.handler.getStackInSlot(3).func_190916_E() < 64 && !this.isConsumingDown && (this.handler.getStackInSlot(3).func_190926_b() || this.handler.getStackInSlot(3).func_77969_a(this.smeltResult(this.handler.getStackInSlot(1))))) {
+		if(!this.handler.getStackInSlot(1).isEmpty() && !MushConfig.isMushPowersDesactived(this.handler.getStackInSlot(1).getItem()) && !this.handler.getStackInSlot(4).isEmpty() && this.handler.getStackInSlot(3).getCount() < 64 && !this.isConsumingDown && (this.handler.getStackInSlot(3).isEmpty() || this.handler.getStackInSlot(3).isItemEqual(this.smeltResult(this.handler.getStackInSlot(1))))) {
 			this.isConsumingDown = true;
-		}else if(this.isConsumingDown && (this.handler.getStackInSlot(1).func_190926_b() || this.handler.getStackInSlot(4).func_190926_b() || this.handler.getStackInSlot(3).func_190916_E() >= 64)) { 
+		}else if(this.isConsumingDown && (this.handler.getStackInSlot(1).isEmpty() || this.handler.getStackInSlot(4).isEmpty() || this.handler.getStackInSlot(3).getCount() >= 64)) { 
 			this.isConsumingDown = false;
 			this.cooldownDown = 0;
 		}
 		//System.out.println(MushConfig.isMushPowersDesactived(this.handler.getStackInSlot(1).getItem())+" - "+this.handler.getStackInSlot(1).getItem().getUnlocalizedName());
-		if(!this.handler.getStackInSlot(1).func_190926_b() && MushConfig.isMushPowersDesactived(this.handler.getStackInSlot(1).func_77973_b()))
+		if(!this.handler.getStackInSlot(1).isEmpty() && MushConfig.isMushPowersDesactived(this.handler.getStackInSlot(1).getItem()))
 			this.desactivedItem = true;
 		else
 			this.desactivedItem = false;

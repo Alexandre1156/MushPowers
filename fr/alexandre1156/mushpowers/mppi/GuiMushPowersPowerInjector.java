@@ -26,43 +26,43 @@ public class GuiMushPowersPowerInjector extends GuiContainer {
 	}
 
 	@Override
-	protected void func_146976_a(float partialTicks, int mouseX, int mouseY) {
-		GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
-		this.field_146297_k.func_110434_K().func_110577_a(MPPI_GUI_TEXTURE);
-		int i = (this.field_146294_l - this.field_146999_f) / 2;
-		int j = (this.field_146295_m - this.field_147000_g) / 2;
-		this.func_73729_b(i, j, 0, 0, this.field_146999_f, this.field_147000_g);
+	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		this.mc.getTextureManager().bindTexture(MPPI_GUI_TEXTURE);
+		int i = (this.width - this.xSize) / 2;
+		int j = (this.height - this.ySize) / 2;
+		this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
 	}
 
 	@Override
-	protected void func_146979_b(int mouseX, int mouseY) {
-		String name = I18n.func_135052_a("container.mppi", new Object[0]);
-		this.field_146289_q.func_78276_b(name, this.field_146999_f / 2 - this.field_146289_q.func_78256_a(name) / 2, 6,
+	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+		String name = I18n.format("container.mppi", new Object[0]);
+		this.fontRendererObj.drawString(name, this.xSize / 2 - this.fontRendererObj.getStringWidth(name) / 2, 6,
 				4210752);
-		this.field_146289_q.func_78276_b(this.playerInv.func_145748_c_().func_150260_c(), 8, this.field_147000_g - 96 + 2,
+		this.fontRendererObj.drawString(this.playerInv.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2,
 				4210752);
-		int i = (this.field_146294_l - this.field_146999_f) / 2;
-		int j = (this.field_146295_m - this.field_147000_g) / 2;
+		int i = (this.width - this.xSize) / 2;
+		int j = (this.height - this.ySize) / 2;
 		if (this.te.isConsumingUp()) {
-			GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
-			this.field_146297_k.func_110434_K().func_110577_a(MPPI_GUI_TEXTURE);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			this.mc.getTextureManager().bindTexture(MPPI_GUI_TEXTURE);
 			int width = this.te.getCooldownUp() / 2 / 4;
-			this.func_73729_b(79, 17, 176, 14, width, 17);
+			this.drawTexturedModalRect(79, 17, 176, 14, width, 17);
 		}
 		if(this.te.isConsumingDown()){
-			GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
-			this.field_146297_k.func_110434_K().func_110577_a(MPPI_GUI_TEXTURE);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			this.mc.getTextureManager().bindTexture(MPPI_GUI_TEXTURE);
 			int width = this.te.getCooldownDown() / 2 / 24;
-			this.func_73729_b(79, 54, 176, 14, width, 17);
+			this.drawTexturedModalRect(79, 54, 176, 14, width, 17);
 		}
-		if(mouseX >= (this.field_147003_i+80) && mouseX < (this.field_147003_i+102) && mouseY > (this.field_147009_r+50) && mouseY < (this.field_147009_r+70))
-			this.func_146283_a(Lists.newArrayList(this.te.getCooldownDown()*100/1200+"%"), 69, 69);
-		if(mouseX >= (this.field_147003_i+80) && mouseX < (this.field_147003_i+102) && mouseY > (this.field_147009_r+15) && mouseY < (this.field_147009_r+35))
-			this.func_146283_a(Lists.newArrayList(this.te.getCooldownUp()*100/200+"%"), 69, 33);
+		if(mouseX >= (this.guiLeft+80) && mouseX < (this.guiLeft+102) && mouseY > (this.guiTop+50) && mouseY < (this.guiTop+70))
+			this.drawHoveringText(Lists.newArrayList(this.te.getCooldownDown()*100/1200+"%"), 69, 69);
+		if(mouseX >= (this.guiLeft+80) && mouseX < (this.guiLeft+102) && mouseY > (this.guiTop+15) && mouseY < (this.guiTop+35))
+			this.drawHoveringText(Lists.newArrayList(this.te.getCooldownUp()*100/200+"%"), 69, 33);
 		if(this.te.isDesactivedItem()){
-			RenderHelper.func_74518_a();
-			this.func_73731_b(field_146289_q, "DESACTIVED SHROOM", 20, 40, Color.red.getRGB());
-			RenderHelper.func_74519_b();
+			RenderHelper.disableStandardItemLighting();
+			this.drawString(fontRendererObj, "DESACTIVED SHROOM", 20, 40, Color.red.getRGB());
+			RenderHelper.enableStandardItemLighting();
 		}
 	}
 

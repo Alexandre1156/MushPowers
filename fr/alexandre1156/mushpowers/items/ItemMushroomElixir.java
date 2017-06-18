@@ -8,9 +8,9 @@ import net.minecraft.util.ResourceLocation;
 public class ItemMushroomElixir extends Item {
 
 	public ItemMushroomElixir() {
-		this.func_77655_b("ime");
+		this.setUnlocalizedName("ime");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "ime"));
-		this.func_77637_a(CreativeTabs.field_78026_f);
+		this.setCreativeTab(CreativeTabs.MISC);
 	}
 	
 }

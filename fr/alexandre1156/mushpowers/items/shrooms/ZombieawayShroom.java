@@ -25,15 +25,15 @@ public class ZombieawayShroom extends ItemFood {
 
 	public ZombieawayShroom() {
 		super(1, 1.0f, false);
-		this.func_77655_b("zombieawayshroom");
+		this.setUnlocalizedName("zombieawayshroom");
 		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "zombieawayshroom"));
-		this.func_77637_a(CreativeTabs.field_78039_h);
-		this.func_77848_i();
+		this.setCreativeTab(CreativeTabs.FOOD);
+		this.setAlwaysEdible();
 	}
 	
 	@Override
-	protected void func_77849_c(ItemStack stack, World worldIn, EntityPlayer player) {
-		if(!worldIn.field_72995_K){
+	protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
+		if(!worldIn.isRemote){
 			player.getCapability(PlayerMushProvider.MUSH_CAP, null).setZombieAway(true);
 			player.getCapability(PlayerMushProvider.MUSH_CAP, null).setCooldown(MainMushPowers.ZOMBIEAWAY, (short) MushConfig.cooldownZombieAway);
 			PlayerMushProvider.resetOtherMainMushPower(player, MainMushPowers.ZOMBIEAWAY);
@@ -43,12 +43,12 @@ public class ZombieawayShroom extends ItemFood {
 	}
 	
 	@Override
-	public ActionResult<ItemStack> func_77659_a(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		ItemStack itemstack = playerIn.func_184586_b(handIn);
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+		ItemStack itemstack = playerIn.getHeldItem(handIn);
 		if(MushConfig.isMushPowersDesactived(this))
 			return new ActionResult(EnumActionResult.FAIL, itemstack);
 		else
-			return super.func_77659_a(worldIn, playerIn, handIn);
+			return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
 //	@Override
@@ -62,13 +62,13 @@ public class ZombieawayShroom extends ItemFood {
 //	}
 	
 	private void updateZombiesTasks(EntityPlayer player){
-		List<EntityZombie> zombies = player.field_70170_p.func_175644_a(EntityZombie.class, Predicates.alwaysTrue());
+		List<EntityZombie> zombies = player.world.getEntities(EntityZombie.class, Predicates.alwaysTrue());
 		for(EntityZombie zombie : zombies)
-			zombie.field_70714_bg.func_75774_a();
+			zombie.tasks.onUpdateTasks();
 	}
 	
 	@Override
-	public void func_77624_a(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		tooltip.add(ChatFormatting.WHITE+"Zombies around you will run away from you.");
 		tooltip.add(ChatFormatting.GREEN+""+ChatFormatting.BOLD+"Lasts in "+MushUtils.correctCooldownMessage(MushConfig.cooldownZombieAway));
 		if(MushConfig.isMushPowersDesactived(this))
