@@ -4,32 +4,29 @@ import java.util.List;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
-import fr.alexandre1156.mushpowers.Reference;
+import fr.alexandre1156.mushpowers.MushPowers;
 import fr.alexandre1156.mushpowers.capabilities.RegenProvider;
 import fr.alexandre1156.mushpowers.config.MushConfig;
-import net.minecraft.creativetab.CreativeTabs;
+import fr.alexandre1156.mushpowers.particle.ShroomParticle;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public class Regenshroom extends ItemFood {
-
+public class Regenshroom extends ItemMushPowers {
 	
 	public Regenshroom() {
-		super(1, 0.0f, false);
-		this.setUnlocalizedName("regenshroom");
-		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "regenshroom"));
-		this.setCreativeTab(CreativeTabs.FOOD);
-		this.setAlwaysEdible();
+		super(1, 0.0f, "regenshroom");
 	}
 	
 	@Override
@@ -50,7 +47,7 @@ public class Regenshroom extends ItemFood {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
-		if(playerIn.getHealth() >= 20f || MushConfig.isMushPowersDesactived(this))
+		if(playerIn.getHealth() >= playerIn.getMaxHealth())
 			return new ActionResult(EnumActionResult.FAIL, itemstack);
 		else
 			return super.onItemRightClick(worldIn, playerIn, handIn);
@@ -71,8 +68,41 @@ public class Regenshroom extends ItemFood {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		tooltip.add(ChatFormatting.WHITE+"Regenerates "+MushConfig.hearthRegenshroom+" half-hearts.");
-		if(MushConfig.isMushPowersDesactived(this))
-			tooltip.add(ChatFormatting.RED+"THIS SHROOM IS DESACTIVED");
+		super.addInformation(stack, playerIn, tooltip, advanced);
+	}
+
+	@Override
+	public TextFormatting getColorName() {
+		return TextFormatting.LIGHT_PURPLE;
+	}
+
+	@Override
+	public boolean onUsedOnLivingEntity(World world, EntityLivingBase entLiv, EntityPlayer player) {
+		if(!world.isRemote && entLiv.getHealth() != entLiv.getMaxHealth()) {
+			entLiv.heal(MushConfig.hearthRegenshroom);
+			for(int i = 0; i <= 2; i++)
+				MushPowers.instance.proxy.spawnShroomParticle(entLiv, ShroomParticle.HEARTH);
+			return true;
+		} else if(entLiv.getHealth() == entLiv.getMaxHealth()) {
+			player.sendStatusMessage(new TextComponentTranslation("rodstick.fullhearth.message", new Object[0]), true);
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean compatibleEntityBase(EntityLivingBase ent) {
+		return super.compatibleEntityBase(ent) && ent instanceof EntityZombie || ent instanceof EntitySkeleton ? false : true;
+	}
+
+	@Override
+	public ShroomParticle getParticleOnLivingEntity() {
+		return ShroomParticle.HEARTH;
+	}
+
+	@Override
+	public boolean isEntityLivingCompatible() {
+		return true;
 	}
 	
 }

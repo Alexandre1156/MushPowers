@@ -28,8 +28,10 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.RecipeSorter.Category;
 
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, guiFactory = Reference.GUI_FACTORY, updateJSON = "https://github.com/Alexandre1156/MushPowers/blob/master/Update.json")
+@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.VERSION, guiFactory = Reference.GUI_FACTORY, updateJSON = "https://raw.githubusercontent.com/Alexandre1156/MushPowers/master/Update.json")
 public class MushPowers {
 
 	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS)
@@ -44,10 +46,10 @@ public class MushPowers {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		proxy.preInit(event);
 		MushConfig.config = new Configuration(event.getSuggestedConfigurationFile());
 		MushConfig.config.load();
-		MushConfig.syncConfig();
-		proxy.preInit(event);
+		//MushConfig.syncConfig();
 		this.squidPlayers = Maps.newHashMap();
 		this.ghostPlayers = Maps.newHashMap();
 	}
@@ -64,14 +66,16 @@ public class MushPowers {
 		GameRegistry.addRecipe(new ItemStack(CommonProxy.blockMPPI), new Object[] {
 				" G ", "RBR", " F ", 'G', Items.GLASS_BOTTLE, 'R', Blocks.RED_MUSHROOM, 'B', Items.BREWING_STAND, 'F', Items.BLAZE_ROD
 		});
+		RecipeSorter.register("mush:craftshroomrodstick", ShroomRodStickRecipe.class, Category.SHAPELESS, "");
+		GameRegistry.addRecipe(new ShroomRodStickRecipe());
 		GameRegistry.registerWorldGenerator(new StructureMushPowerGenerator(), 100);
+		MushConfig.syncConfig();
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
-		//TODO:Random shroom
-		//TODO:Mush stick
+		//TODO:Random shroom -> bush
 	}
 	
 	public void addSquidPlayer(String username, boolean value){

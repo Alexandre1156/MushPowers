@@ -1,9 +1,10 @@
 package fr.alexandre1156.mushpowers.events;
 
+import fr.alexandre1156.mushpowers.MushPowers;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
-import fr.alexandre1156.mushpowers.config.MushConfig;
+import fr.alexandre1156.mushpowers.particle.ShroomParticle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,7 +16,7 @@ public class ChickenshroomEvent extends ShroomEvent {
 	
 	@Override
 	protected void onTickPlayer(EntityPlayer p, Phase phase, Side side) {
-		if(side.isClient() && p.getCapability(PlayerMushProvider.MUSH_CAP, null).isChicken()){
+		if(p.getCapability(PlayerMushProvider.MUSH_CAP, null).isChicken()){
 			if(p.motionY < 0.0D && !p.onGround) 
 				p.motionY *= 0.77D;
 			p.motionX *= 0.8D;
@@ -50,12 +51,29 @@ public class ChickenshroomEvent extends ShroomEvent {
 			else if(mush.getCooldown(MainMushPowers.CHICKEN) == 600 || mush.getCooldown(MainMushPowers.CHICKEN) == 200 || mush.getCooldown(MainMushPowers.CHICKEN) == 180 || mush.getCooldown(MainMushPowers.CHICKEN) == 160 || mush.getCooldown(MainMushPowers.CHICKEN) == 140 || mush.getCooldown(MainMushPowers.CHICKEN) == 120 || mush.getCooldown(MainMushPowers.CHICKEN) == 100 || mush.getCooldown(MainMushPowers.CHICKEN) == 80 || mush.getCooldown(MainMushPowers.CHICKEN) == 60 || mush.getCooldown(MainMushPowers.CHICKEN) == 40 || mush.getCooldown(MainMushPowers.CHICKEN) == 20)
 				p.sendStatusMessage(new TextComponentTranslation("chicken.time.left.sec", (mush.getCooldown(MainMushPowers.CHICKEN)/20)), true);
 			if(mush.getCooldown(MainMushPowers.CHICKEN) <= 0) {
-				mush.setCooldown(MainMushPowers.CHICKEN, (short) MushConfig.cooldownChicken);
+				mush.setCooldown(MainMushPowers.CHICKEN, (short) 0);
 				mush.setChicken(false);
 				PlayerMushProvider.syncCapabilities(p);
 				return;
 			}
 			mush.setCooldown(MainMushPowers.CHICKEN, (short) (mush.getCooldown(MainMushPowers.CHICKEN)-1));
+		} else {
+			IPlayerMush mush = entLiv.getCapability(PlayerMushProvider.MUSH_CAP, null);
+			if(mush.getCooldown(MainMushPowers.CHICKEN) <= 0){
+				System.out.println("CHICKEN SHROOM FINISHED FOR "+entLiv);
+				mush.setCooldown(MainMushPowers.CHICKEN, (short) 0);
+				mush.setChicken(false);
+				return;
+			}
+			mush.setCooldown(MainMushPowers.CHICKEN, (short) (mush.getCooldown(MainMushPowers.CHICKEN)-1));
+		}
+		if(!(entLiv instanceof EntityPlayer)){
+			if(entLiv.ticksExisted % 20 == 0)
+				MushPowers.getInstance().proxy.spawnShroomParticle(entLiv, ShroomParticle.CHICKEN);
+			if(entLiv.motionY < 0.0D && !entLiv.onGround) 
+				entLiv.motionY *= 0.77D;
+			entLiv.motionX *= 0.8D;
+			entLiv.motionZ *= 0.8D;
 		}
 	}
 	

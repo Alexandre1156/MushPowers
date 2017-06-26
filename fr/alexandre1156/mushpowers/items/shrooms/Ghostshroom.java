@@ -5,29 +5,21 @@ import java.util.List;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 import fr.alexandre1156.mushpowers.MushUtils;
-import fr.alexandre1156.mushpowers.Reference;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
 import fr.alexandre1156.mushpowers.config.MushConfig;
-import net.minecraft.creativetab.CreativeTabs;
+import fr.alexandre1156.mushpowers.particle.ShroomParticle;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public class Ghostshroom extends ItemFood {
+public class Ghostshroom extends ItemMushPowers {
 
 	public Ghostshroom() {
-		super(1, 0.0f, false);
-		this.setUnlocalizedName("ghostshroom");
-		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "ghostshroom"));
-		this.setCreativeTab(CreativeTabs.FOOD);
-		this.setAlwaysEdible();
+		super(1, 0.0f, "ghostshroom");
 	}
 	
 	@Override
@@ -35,20 +27,11 @@ public class Ghostshroom extends ItemFood {
 		if(!worldIn.isRemote){
 			IPlayerMush mush = player.getCapability(PlayerMushProvider.MUSH_CAP, null);
 			mush.setGhost(true);
-			mush.setCooldown(MainMushPowers.GHOST, (short) MushConfig.cooldownGhost);
+			mush.setCooldown(MainMushPowers.GHOST, (short) MushConfig.getCooldown(MainMushPowers.GHOST));
 			PlayerMushProvider.sendGhostPacket(player, true);
 			PlayerMushProvider.resetOtherMainMushPower(player, MainMushPowers.GHOST);
 			PlayerMushProvider.syncCapabilities(player);
 		}
-	}
-	
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		ItemStack itemstack = playerIn.getHeldItem(handIn);
-		if(MushConfig.isMushPowersDesactived(this))
-			return new ActionResult(EnumActionResult.FAIL, itemstack);
-		else
-			return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
 	@Override
@@ -60,9 +43,28 @@ public class Ghostshroom extends ItemFood {
 				+ "If a normal player hits you, "
 				+ "you will cause a small explosion that doesn't damage blocks or players or ghosts, "
 				+ "but insta-kills you\n. If you are being hit by a ghost, both you and the ghost that hit you will show.");
-		tooltip.add(ChatFormatting.GREEN+""+ChatFormatting.BOLD+"Lasts in "+MushUtils.correctCooldownMessage(MushConfig.cooldownGhost)+" if no ghost/player hit you");
-		if(MushConfig.isMushPowersDesactived(this))
-			tooltip.add(ChatFormatting.RED+"THIS SHROOM IS DESACTIVED");
+		tooltip.add(ChatFormatting.GREEN+""+ChatFormatting.BOLD+"Lasts in "+MushUtils.correctCooldownMessage(MushConfig.getCooldown(MainMushPowers.GHOST))+" if no ghost/player hit you");
+		super.addInformation(stack, playerIn, tooltip, advanced);
+	}
+
+	@Override
+	public TextFormatting getColorName() {
+		return TextFormatting.WHITE;
+		
+	}
+
+	@Override
+	public boolean onUsedOnLivingEntity(World world, EntityLivingBase entLiv, EntityPlayer player) {return false;}
+
+	@Override
+	public ShroomParticle getParticleOnLivingEntity() {
+		return null;
+		
+	}
+
+	@Override
+	public boolean isEntityLivingCompatible() {
+		return false;
 	}
 
 }

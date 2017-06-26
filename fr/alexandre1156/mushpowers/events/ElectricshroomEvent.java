@@ -4,7 +4,6 @@ import fr.alexandre1156.mushpowers.Electrocution;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
-import fr.alexandre1156.mushpowers.config.MushConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,7 +43,7 @@ public class ElectricshroomEvent extends ShroomEvent {
 	protected boolean onLivingDeath(EntityLivingBase entLiv, DamageSource source) {
 		if(entLiv instanceof EntityPlayer) {
 			EntityPlayer p = (EntityPlayer) entLiv;
-				p.getCombatTracker().trackDamage(Electrocution.causeElectrocution(source.getEntity(), p), 0, 1);
+			p.getCombatTracker().trackDamage(Electrocution.causeElectrocution(source.getEntity(), p), 0, 1);
 		}
 		return super.onLivingDeath(entLiv, source);
 	}
@@ -61,7 +60,7 @@ public class ElectricshroomEvent extends ShroomEvent {
 			else if(mush.getCooldown(MainMushPowers.ELECTRIC) == 2700)
 				p.sendStatusMessage(new TextComponentTranslation("eletric.time.start", mush.getCooldown(MainMushPowers.ELECTRIC)), true);
 			if(mush.getCooldown(MainMushPowers.ELECTRIC) <= 0) {
-				mush.setCooldown(MainMushPowers.ELECTRIC, (short) MushConfig.cooldownElectric);
+				mush.setCooldown(MainMushPowers.ELECTRIC, (short) 0);
 				mush.setElectric(false);
 				PlayerMushProvider.syncCapabilities(p);
 				return;

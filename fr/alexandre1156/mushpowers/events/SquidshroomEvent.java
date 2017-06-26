@@ -10,7 +10,6 @@ import fr.alexandre1156.mushpowers.MushPowers;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
-import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.network.PacketSquidPlayersList;
 import fr.alexandre1156.mushpowers.proxy.ClientProxy;
 import net.minecraft.block.material.Material;
@@ -164,7 +163,7 @@ public class SquidshroomEvent extends ShroomEvent {
 				else if(mush.getCooldown(MainMushPowers.SQUID) == 600 || mush.getCooldown(MainMushPowers.SQUID) == 200 || mush.getCooldown(MainMushPowers.SQUID) == 180 || mush.getCooldown(MainMushPowers.SQUID) == 160 || mush.getCooldown(MainMushPowers.SQUID) == 140 || mush.getCooldown(MainMushPowers.SQUID) == 120 || mush.getCooldown(MainMushPowers.SQUID) == 100 || mush.getCooldown(MainMushPowers.SQUID) == 80 || mush.getCooldown(MainMushPowers.SQUID) == 60 || mush.getCooldown(MainMushPowers.SQUID) == 40 || mush.getCooldown(MainMushPowers.SQUID) == 20)
 					p.sendStatusMessage(new TextComponentTranslation("squid.time.left.sec", (mush.getCooldown(MainMushPowers.SQUID)/20)).setStyle(new Style().setColor(TextFormatting.DARK_AQUA)), true);
 				else if(mush.getCooldown(MainMushPowers.SQUID) <= 0){
-					mush.setCooldown(MainMushPowers.SQUID, (short) MushConfig.cooldownSquid);
+					mush.setCooldown(MainMushPowers.SQUID, (short) 0);
 					mush.setSquid(false);
 					mush.setSquidAir(300);
 					MushPowers.getInstance().setSquidPlayer(Minecraft.getMinecraft().player.getName(), false);

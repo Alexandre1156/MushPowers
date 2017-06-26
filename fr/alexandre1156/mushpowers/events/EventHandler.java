@@ -101,7 +101,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void livingUpdate(LivingUpdateEvent e){
 		for(int i = 0; i < shrooms.size(); i++) {
-			if(predicates.get(i).apply(e.getEntityLiving()))
+			if(predicates.get(i).apply(e.getEntityLiving())) 
 				shrooms.get(i).onLivingUpdate(e.getEntity(), e.getEntityLiving());
 		}
 	}
@@ -212,6 +212,15 @@ public class EventHandler {
 				shrooms.get(i).onAnvilRepair(e.getBreakChance(), e.getEntityPlayer(), e.getItemInput(), e.getIngredientInput(), e.getItemResult());
 		}
 	}
+	
+//	@SubscribeEvent
+//	public void living(TickEvent.WorldTickEvent e) {
+//		for(int i = 0; i < shrooms.size(); i++){
+//			if(predicates.get(i).apply(e.)){
+//				
+//			}
+//		}
+//	}
 	
 //	@SubscribeEvent
 //	public void playerContainerOpen(PlayerContainerEvent.Open e){

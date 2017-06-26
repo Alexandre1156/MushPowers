@@ -6,7 +6,6 @@ import fr.alexandre1156.mushpowers.EntityAINearestAttackablePlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
-import fr.alexandre1156.mushpowers.config.MushConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -57,7 +56,7 @@ public class HostileshroomEvent extends ShroomEvent {
 				else if(mush.getCooldown(MainMushPowers.HOSTILE) == 600 || mush.getCooldown(MainMushPowers.HOSTILE) == 200 || mush.getCooldown(MainMushPowers.HOSTILE) == 180 || mush.getCooldown(MainMushPowers.HOSTILE) == 160 || mush.getCooldown(MainMushPowers.HOSTILE) == 140 || mush.getCooldown(MainMushPowers.HOSTILE) == 120 || mush.getCooldown(MainMushPowers.HOSTILE) == 100 || mush.getCooldown(MainMushPowers.HOSTILE) == 80 || mush.getCooldown(MainMushPowers.HOSTILE) == 60 || mush.getCooldown(MainMushPowers.HOSTILE) == 40 || mush.getCooldown(MainMushPowers.HOSTILE) == 20)
 					p.sendStatusMessage(new TextComponentTranslation("hostile.time.left.sec", (mush.getCooldown(MainMushPowers.HOSTILE)/20)), true);
 				if(mush.getCooldown(MainMushPowers.HOSTILE) <= 0) {
-					mush.setCooldown(MainMushPowers.HOSTILE, (short) MushConfig.cooldownHostile);
+					mush.setCooldown(MainMushPowers.HOSTILE, (short) 0);
 					mush.setHostile(false);
 					PlayerMushProvider.syncCapabilities(p);
 					return;

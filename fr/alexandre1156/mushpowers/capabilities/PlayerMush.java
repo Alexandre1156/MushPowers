@@ -1,6 +1,8 @@
 package fr.alexandre1156.mushpowers.capabilities;
 
 import fr.alexandre1156.mushpowers.config.MushConfig;
+import fr.alexandre1156.mushpowers.items.shrooms.ItemMushPowers;
+import fr.alexandre1156.mushpowers.proxy.CommonProxy;
 
 public class PlayerMush implements IPlayerMush{
 
@@ -83,12 +85,22 @@ public class PlayerMush implements IPlayerMush{
 	}
 	
 	public static enum MainMushPowers{
-		SQUID((short) 0), ZOMBIEAWAY((short) 0), HOSTILE((short) 0), CHICKEN((short) 0), GHOST((short) 0), ELECTRIC((short) 0), FLY((short) 0);
+		SQUID((short) 0, (ItemMushPowers) CommonProxy.itemSquidshroom, (short) 6000), 
+		ZOMBIEAWAY((short) 0, (ItemMushPowers) CommonProxy.itemZombieawayShroom, (short) 6000), 
+		HOSTILE((short) 0, (ItemMushPowers) CommonProxy.itemHostileshroom, (short) 6000), 
+		CHICKEN((short) 0, (ItemMushPowers) CommonProxy.itemChickenshroom, (short) 3600), 
+		GHOST((short) 0, (ItemMushPowers) CommonProxy.itemGhostshroom, (short) 2700), 
+		ELECTRIC((short) 0, (ItemMushPowers) CommonProxy.itemElectricshroom, (short) 18000), 
+		FLY((short) 0, (ItemMushPowers) CommonProxy.itemFlyshroom, (short) 1200);
 		
 		private short timeLeft;
+		private ItemMushPowers instance;
+		private short defaultValue;
 		
-		private MainMushPowers(short timeLeft){
+		private MainMushPowers(short timeLeft, ItemMushPowers mushPowersInstance, short defaultValue){
 			this.timeLeft = timeLeft;
+			this.instance = mushPowersInstance;
+			this.defaultValue = defaultValue;
 		}
 		
 		private void setTimeLeft(short timeLeft){
@@ -97,6 +109,14 @@ public class PlayerMush implements IPlayerMush{
 		
 		private short getTimeLeft(){
 			return this.timeLeft;
+		}
+		
+		public ItemMushPowers getItemInstance() {
+			return instance;
+		}
+		
+		public short getCooldownDefaultValue() {
+			return defaultValue;
 		}
 	}
 	

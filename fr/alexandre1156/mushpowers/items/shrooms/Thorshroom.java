@@ -2,22 +2,17 @@ package fr.alexandre1156.mushpowers.items.shrooms;
 
 import java.util.List;
 
-import fr.alexandre1156.mushpowers.Reference;
-import net.minecraft.creativetab.CreativeTabs;
+import fr.alexandre1156.mushpowers.particle.ShroomParticle;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public class Thorshroom extends ItemFood {
+public class Thorshroom extends ItemMushPowers {
 
 	public Thorshroom() {
-		super(1, 0.0f, false);
-		this.setUnlocalizedName("thorshroom");
-		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "thorshroom"));
-		this.setCreativeTab(CreativeTabs.FOOD);
-		this.setAlwaysEdible();
+		super(1, 0.0f, "thorshroom");
 	}
 	
 	@Override
@@ -28,6 +23,25 @@ public class Thorshroom extends ItemFood {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		
+	}
+
+	@Override
+	public TextFormatting getColorName() {
+		return TextFormatting.OBFUSCATED;
+		
+	}
+
+	@Override
+	public boolean onUsedOnLivingEntity(World world, EntityLivingBase entLiv, EntityPlayer player) {return false;}
+
+	@Override
+	public ShroomParticle getParticleOnLivingEntity() {
+		return null;
+	}
+
+	@Override
+	public boolean isEntityLivingCompatible() {
+		return false;
 	}
 
 }

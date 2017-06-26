@@ -6,8 +6,10 @@ import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.network.PacketCapabilitiesMushPowers;
 import fr.alexandre1156.mushpowers.network.PacketGhostPlayer;
 import fr.alexandre1156.mushpowers.network.PacketSquidPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -41,53 +43,63 @@ public class PlayerMushProvider implements ICapabilitySerializable<NBTBase>{
 		MUSH_CAP.getStorage().readNBT(MUSH_CAP, this.instance, null, nbt);
 	}
 	
-	public static void resetOtherMainMushPower(EntityPlayer p, MainMushPowers power){
-		IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-		if(mush.isChicken() && power != MainMushPowers.CHICKEN) { mush.setChicken(false); mush.setCooldown(MainMushPowers.CHICKEN, (short) MushConfig.cooldownChicken);}
+	public static void resetOtherMainMushPower(EntityLivingBase entLiv, MainMushPowers power){
+		IPlayerMush mush = entLiv.getCapability(PlayerMushProvider.MUSH_CAP, null);
+		if(mush.isChicken() && power != MainMushPowers.CHICKEN) { 
+			mush.setChicken(false); 
+			mush.setCooldown(MainMushPowers.CHICKEN, (short) 0);
+		}
 		if(mush.isGhost() && power != MainMushPowers.GHOST) { 
 			mush.setGhost(false); 
-			mush.setCooldown(MainMushPowers.GHOST, (short) MushConfig.cooldownGhost);
-			sendGhostPacket(p, false);
+			mush.setCooldown(MainMushPowers.GHOST, MushConfig.getCooldown(MainMushPowers.GHOST));
+			if(entLiv instanceof EntityPlayer)
+				sendGhostPacket((EntityPlayer) entLiv, false);
 		}
-		if(mush.isHostile() && power != MainMushPowers.HOSTILE) { mush.setHostile(false); mush.setCooldown(MainMushPowers.HOSTILE, (short) MushConfig.cooldownHostile);}
+		if(mush.isHostile() && power != MainMushPowers.HOSTILE) { mush.setHostile(false); mush.setCooldown(MainMushPowers.HOSTILE, MushConfig.getCooldown(MainMushPowers.HOSTILE));}
 		if(mush.isSquid() && power != MainMushPowers.SQUID) { 
 			mush.setSquid(false); 
 			mush.setSquidAir(6000); 
-			mush.setCooldown(MainMushPowers.SQUID, (short) MushConfig.cooldownSquid);
-			sendSquidPacket(p, false);
+			mush.setCooldown(MainMushPowers.SQUID, MushConfig.getCooldown(MainMushPowers.SQUID));
+			if(entLiv instanceof EntityPlayer)
+				sendSquidPacket((EntityPlayer) entLiv, false);
 		}
-		if(mush.isZombieAway() && power != MainMushPowers.ZOMBIEAWAY) { mush.setZombieAway(false); mush.setCooldown(MainMushPowers.ZOMBIEAWAY, (short) MushConfig.cooldownZombieAway);}
-		if(mush.isElectric() && power != MainMushPowers.ELECTRIC) {mush.setElectric(false); mush.setCooldown(MainMushPowers.ELECTRIC, (short) MushConfig.cooldownElectric);}
-		syncCapabilities(p);
+		if(mush.isZombieAway() && power != MainMushPowers.ZOMBIEAWAY) { mush.setZombieAway(false); mush.setCooldown(MainMushPowers.ZOMBIEAWAY, MushConfig.getCooldown(MainMushPowers.ZOMBIEAWAY));}
+		if(mush.isElectric() && power != MainMushPowers.ELECTRIC) {mush.setElectric(false); mush.setCooldown(MainMushPowers.ELECTRIC, MushConfig.getCooldown(MainMushPowers.ELECTRIC));}
+		if(mush.isFlying() && power != MainMushPowers.FLY) {
+			mush.setFly(false);
+			mush.setCooldown(MainMushPowers.FLY, (short) 0);
+			entLiv.removeActivePotionEffect(MobEffects.LEVITATION);
+		}
+		if(entLiv instanceof EntityPlayer) syncCapabilities((EntityPlayer) entLiv);
 	}
 	
-	public static void syncCapabilities(EntityPlayer player){
-		IPlayerMush mush = player.getCapability(PlayerMushProvider.MUSH_CAP, null);
+	public static void syncCapabilities(EntityPlayer entLiv){
+		IPlayerMush mush = entLiv.getCapability(PlayerMushProvider.MUSH_CAP, null);
 		PacketCapabilitiesMushPowers packetCapabilities = new PacketCapabilitiesMushPowers(mush);
-		if(!player.world.isRemote && player instanceof EntityPlayerMP)
-			MushPowers.network.sendTo(packetCapabilities, (EntityPlayerMP) player);
+		if(!entLiv.world.isRemote && entLiv instanceof EntityPlayerMP)
+			MushPowers.network.sendTo(packetCapabilities, (EntityPlayerMP) entLiv);
 	}
 	
 	public static void resetPlayer(EntityPlayer player, boolean isMilk){
 		IPlayerMush mush = player.getCapability(PlayerMushProvider.MUSH_CAP, null);
 		mush.setSquid(false);
 		mush.setSquidAir(300);
-		mush.setCooldown(MainMushPowers.SQUID, (short) MushConfig.cooldownSquid);
-		mush.setCooldown(MainMushPowers.ZOMBIEAWAY, (short) MushConfig.cooldownZombieAway);
-		mush.setCooldown(MainMushPowers.HOSTILE, (short) MushConfig.cooldownHostile);
+		mush.setCooldown(MainMushPowers.SQUID, MushConfig.getCooldown(MainMushPowers.SQUID));
+		mush.setCooldown(MainMushPowers.ZOMBIEAWAY, MushConfig.getCooldown(MainMushPowers.ZOMBIEAWAY));
+		mush.setCooldown(MainMushPowers.HOSTILE, MushConfig.getCooldown(MainMushPowers.HOSTILE));
 		mush.setShroomCount((byte) 0);
 		mush.setZombieAway(false);
 		mush.setHostile(false);
 		mush.setChicken(false);
-		mush.setCooldown(MainMushPowers.CHICKEN, (short) MushConfig.cooldownChicken);
+		mush.setCooldown(MainMushPowers.CHICKEN, MushConfig.getCooldown(MainMushPowers.CHICKEN));
 		mush.setGhost(false);
-		mush.setCooldown(MainMushPowers.GHOST, (short) MushConfig.cooldownGhost);
+		mush.setCooldown(MainMushPowers.GHOST, MushConfig.getCooldown(MainMushPowers.GHOST));
 		mush.setElectric(false);
-		mush.setCooldown(MainMushPowers.ELECTRIC, (short) MushConfig.cooldownElectric);
+		mush.setCooldown(MainMushPowers.ELECTRIC, MushConfig.getCooldown(MainMushPowers.ELECTRIC));
 		mush.setShieldDamageAbsorb((byte) 0);
 		if(!isMilk) {
 			mush.setFly(false);
-			mush.setCooldown(MainMushPowers.FLY, (short) MushConfig.cooldownFly); 
+			mush.setCooldown(MainMushPowers.FLY, MushConfig.getCooldown(MainMushPowers.FLY)); 
 		}
 		mush.setLowerRepairCost((byte) 0);
 		syncCapabilities(player);

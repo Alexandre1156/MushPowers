@@ -32,6 +32,12 @@ public class SharedMushEvent extends ShroomEvent {
 				}
 			}));
 		}
+		if(entity instanceof EntityLivingBase && !entity.world.isRemote) {
+			EntityLivingBase entLiv = (EntityLivingBase) entity;
+			if(entLiv.hasCapability(PlayerMushProvider.MUSH_CAP, null)) {
+				//SYNC
+			}
+		}
 	}
 	
 	@Override
@@ -42,7 +48,8 @@ public class SharedMushEvent extends ShroomEvent {
 		
 	@Override //SYNC CAPABILITIES SERVER TO CLIENT
 	protected void onPlayerLoggedIn(EntityPlayer p) {
-		PlayerMushProvider.syncCapabilities(p);
+		if(p.hasCapability(PlayerMushProvider.MUSH_CAP, null))
+			PlayerMushProvider.syncCapabilities(p);
 	}
 
 	@Override

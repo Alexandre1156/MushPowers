@@ -6,31 +6,26 @@ import org.lwjgl.input.Keyboard;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
-import fr.alexandre1156.mushpowers.Reference;
 import fr.alexandre1156.mushpowers.capabilities.RegenProvider;
 import fr.alexandre1156.mushpowers.config.MushConfig;
+import fr.alexandre1156.mushpowers.particle.ShroomParticle;
 import fr.alexandre1156.mushpowers.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public class Cursedshroom extends ItemFood {
+public class Cursedshroom extends ItemMushPowers {
 	
 	public Cursedshroom() {
-		super(1, 0.0f, false);
-		this.setUnlocalizedName("cursedshroom");
-		this.setRegistryName(new ResourceLocation(Reference.MOD_ID, "cursedshroom"));
-		this.setCreativeTab(CreativeTabs.FOOD);
-		this.setAlwaysEdible();
+		super(1, 0.0f, "cursedshroom");
 	}
 	
 	@Override
@@ -47,8 +42,7 @@ public class Cursedshroom extends ItemFood {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		tooltip.add(ChatFormatting.WHITE+"Adds 3 negatives effects with random amplifier and duration when eat.\nShift + Left Click to transform to a Bad Regenshroom.");
-		if(MushConfig.isMushPowersDesactived(this))
-			tooltip.add(ChatFormatting.RED+"THIS SHROOM IS DESACTIVED");
+		super.addInformation(stack, playerIn, tooltip, advanced);
 	}
 	
 	@Override
@@ -64,6 +58,25 @@ public class Cursedshroom extends ItemFood {
 			return new ActionResult(EnumActionResult.FAIL, itemstack);
 		} else
 			return super.onItemRightClick(worldIn, playerIn, handIn);
+	}
+
+	@Override
+	public TextFormatting getColorName() {
+		return TextFormatting.DARK_PURPLE;
+		
+	}
+
+	@Override
+	public boolean onUsedOnLivingEntity(World world, EntityLivingBase entLiv, EntityPlayer player) {return false;}
+
+	@Override
+	public ShroomParticle getParticleOnLivingEntity() {
+		return null;
+	}
+
+	@Override
+	public boolean isEntityLivingCompatible() {
+		return false;
 	}
 	
 	

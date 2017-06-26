@@ -7,7 +7,6 @@ import com.google.common.base.Predicate;
 import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
-import fr.alexandre1156.mushpowers.config.MushConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
@@ -64,7 +63,7 @@ public class ZombieawayShroomEvent extends ShroomEvent {
 				else if(mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 600 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 200 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 180 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 160 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 140 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 120 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 100 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 80 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 60 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 40 || mush.getCooldown(MainMushPowers.ZOMBIEAWAY) == 20)
 					p.sendStatusMessage(new TextComponentTranslation("zombierunaway.time.left.sec", (mush.getCooldown(MainMushPowers.ZOMBIEAWAY)/20)).setStyle(new Style().setColor(TextFormatting.DARK_AQUA)), true);
 				if(mush.getCooldown(MainMushPowers.ZOMBIEAWAY) <= 0) {
-					mush.setCooldown(MainMushPowers.ZOMBIEAWAY, (short) MushConfig.cooldownZombieAway);
+					mush.setCooldown(MainMushPowers.ZOMBIEAWAY, (short) 0);
 					mush.setZombieAway(false);
 					PlayerMushProvider.syncCapabilities(p);
 					return;
