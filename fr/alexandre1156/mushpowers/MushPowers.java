@@ -61,19 +61,6 @@ public class MushPowers {
 		MinecraftForge.EVENT_BUS.register(this);
 		this.squidPlayers = Maps.newHashMap();
 		this.ghostPlayers = Maps.newHashMap();
-		
-		//UPDATE: Update to 1.12
-		//UPDATE: randomshroom doesn't have a correct name
-		//UPDATE: chickenshroom rodstick doesn't have the correct texture
-		//UPDATE: percent of damage absorb by the shieldshroom can now be 100 (before, it was 99)
-		//UPDATE: advancement
-		//UPDATE: the player's hitbox doesn't change after the squidshroom transformation finished
-		//UPDATE: you still invisible after the ghostshroom finished
-		//UPDATE: the zombieawayshroom will normally work better
-		//UPDATE: the electricshroom message didn't work
-		//UPDATE: the electricshroom didn't work
-		//UPDATE: the level display when you have eat Lowershroom was always 1
-		
 	}
 
 	@EventHandler
