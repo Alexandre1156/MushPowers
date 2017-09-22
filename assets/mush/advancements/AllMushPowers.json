@@ -1,0 +1,18 @@
+{
+    "display":{
+        "show_toast": true,
+        "announce_to_chat": false,
+        "icon": {
+            "item": "mush:randomshroom"
+        },
+        "title": "All Mush Powers",
+        "description": "Craft all Mush Powers",
+        "frame": "task"
+    },
+    "criteria": {
+        "all_mush_powers": {
+            "trigger": "mush:all_mush_powers"
+        }
+    },
+    "parent": "mush:FirstMushPower"
+}

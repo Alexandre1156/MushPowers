@@ -3,7 +3,11 @@ package fr.alexandre1156.mushpowers.events;
 import com.google.common.base.Predicate;
 
 import fr.alexandre1156.mushpowers.EntityAINearestAttackablePlayerMush;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.capabilities.CapabilityUtils;
+import fr.alexandre1156.mushpowers.capabilities.eat.EatMushPowersProvider;
+import fr.alexandre1156.mushpowers.capabilities.player.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.items.shrooms.ZombieawayShroom;
+import fr.alexandre1156.mushpowers.proxy.CommonProxy.Mushs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -26,7 +30,7 @@ public class SharedMushEvent extends ShroomEvent {
 				@Override
 				public boolean apply(Entity input) {
 					if(input instanceof EntityPlayer)
-						return !((EntityPlayer) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isZombieAway();
+						return !((EntityPlayer) input).getCapability(PlayerMushProvider.MUSH_CAP, null).getBoolean(ZombieawayShroom.IS_ZOMBIEAWAY);
 					else
 						return false;
 				}
@@ -43,18 +47,19 @@ public class SharedMushEvent extends ShroomEvent {
 	@Override
 	protected void onLivingEntityUseItemTick(int duration, EntityLivingBase entLiv, ItemStack item) {
 		if(entLiv instanceof EntityPlayer && !entLiv.world.isRemote && item.getItem() == Items.MILK_BUCKET && duration <= 1)
-			PlayerMushProvider.resetPlayer((EntityPlayer) entLiv, true);
+			CapabilityUtils.resetPlayer((EntityPlayer) entLiv, true);
 	}
 		
 	@Override //SYNC CAPABILITIES SERVER TO CLIENT
 	protected void onPlayerLoggedIn(EntityPlayer p) {
 		if(p.hasCapability(PlayerMushProvider.MUSH_CAP, null))
-			PlayerMushProvider.syncCapabilities(p);
+			CapabilityUtils.syncCapabilities(p);
 	}
 
 	@Override
 	protected void onPlayerCloned(EntityPlayer p, EntityPlayer pOriginal, boolean death) {
-		//USELESS
+		for(Mushs mush : pOriginal.getCapability(EatMushPowersProvider.EAT_MUSHS_CAP, null).getAllEatenMushPowers())
+			p.getCapability(EatMushPowersProvider.EAT_MUSHS_CAP, null).addEatenMushPowers(mush);
 	}
 	
 }

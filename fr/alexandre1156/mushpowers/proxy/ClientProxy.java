@@ -1,5 +1,6 @@
 package fr.alexandre1156.mushpowers.proxy;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -23,6 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,7 +34,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-public class ClientProxy extends CommonProxy{
+public class ClientProxy extends CommonProxy {
 	
 	public static SquidRender squidRender;
 	public static GhostRender ghostRender;
@@ -40,53 +42,24 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void preInit(FMLPreInitializationEvent e) {
 		super.preInit(e);
-		this.registerRenderBlock(blockMPPI);
-		this.registerRenderBlock(bushSquidshroom);
-		this.registerRenderBlock(bushChickenshroom);
-		this.registerRenderBlock(bushCursedshroom);
-		this.registerRenderBlock(bushFlyshroom);
-		this.registerRenderBlock(bushGhostshroom);
-		this.registerRenderBlock(bushHostileshroom);
-		this.registerRenderBlock(bushElectricshroom);
-		this.registerRenderBlock(bushHostileshroom);
-		this.registerRenderBlock(bushLowershroom);
-		this.registerRenderBlock(bushPizzashroom);
-		this.registerRenderBlock(bushRegenshroom);
-		this.registerRenderBlock(bushZombieawayShroom);
-		this.registerRenderBlock(bushShieldshroom);
-		this.registerRenderBlock(bushRandomshroom);
-		this.registerRenderItem(itemMushElexir);
-		this.registerRenderItem(itemRegenshroom);
-		this.registerRenderItem(itemSquidshroom);
-		//this.registerRenderItem(itemThorshroom);
-		this.registerRenderItem(itemGhostshroom);
-		this.registerRenderItem(itemPizzashroom);
-		this.registerRenderItem(itemZombieawayShroom);
-		this.registerRenderItem(itemHostileshroom);
-		this.registerRenderItem(itemChickenshroom);
-		this.registerRenderItem(itemElectricshroom);
-		this.registerRenderItem(itemCursedshroom);
-		this.registerRenderItem(itemShieldshroom);
-		this.registerRenderItem(itemFlyshroom);
-		this.registerRenderItem(itemLowershroom);
-		this.registerRenderItem(itemRandomshroom);
-		
 		List<ResourceLocation> list = Lists.newArrayList();
 		list.add(new ResourceLocation(Reference.MOD_ID, "shroomrodstick"));
 		this.mushPowersCompatibleEntityItems.add(this.itemShroomRodStick);
-		//mushPowersToMetadata.put("shroomrodstick", 0);
-		this.registerRenderItemWithMetadata(this.itemShroomRodStick, 0, list.get(0));
 		int metadata = 0;
-		for(ItemMushPowers power : this.mushPowersItems) {
-			if(power.isEntityLivingCompatible()) {
-				metadata++;
-				//System.out.println(power.getRegistryName().getResourcePath()+" - "+mushPowersToMetadata.size()+" - "+metadataToMushPowers.size()+" - "+list.get(list.size()-1));
-				list.add(new ResourceLocation(Reference.MOD_ID, "shroomrodstick_"+power.getRegistryName().getResourcePath()));
-				this.mushPowersCompatibleEntityItems.add(power);
-				//mushPowersToMetadata.put(power.getRegistryName().getResourcePath(), mushPowersToMetadata.size());
-				//metadataToMushPowers.put(metadataToMushPowers.size(), power);
-				this.registerRenderItemWithMetadata(this.itemShroomRodStick, metadata, list.get(list.size()-1));
+		try {
+			for(Field field : this.getClass().getFields()) {
+				if(field.get(this) instanceof ItemMushPowers) {
+					ItemMushPowers power = (ItemMushPowers) field.get(this);
+					if(power.isEntityLivingCompatible()) {
+						metadata++;
+						list.add(new ResourceLocation(Reference.MOD_ID, "shroomrodstick_"+power.getRegistryName().getResourcePath()));
+						this.mushPowersCompatibleEntityItems.add(power);
+						this.registerRenderItemWithMetadata(this.itemShroomRodStick, metadata, list.get(list.size()-1));
+					}
+				}
 			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
 		ResourceLocation[] resLoc = new ResourceLocation[list.size()];
 		resLoc = list.toArray(resLoc);
@@ -109,14 +82,14 @@ public class ClientProxy extends CommonProxy{
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
-	public void registerRenderBlock(Block block){
-		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(block.getRegistryName(), "inventory"));
-	}
-	
-	public void registerRenderItem(Item item){
-		ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
-	}
-	
+//	public void registerRenderBlock(Block block){
+//		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(block.getRegistryName(), "inventory"));
+//	}
+//	
+//	public void registerRenderItem(Item item){
+//		ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+//	}
+//	
 	public void registerRenderItemWithMetadata(Item item, int metadata, ResourceLocation registry) {
 		ModelLoader.setCustomModelResourceLocation(item, metadata, new ModelResourceLocation(registry, "inventory"));
 	}
@@ -128,6 +101,22 @@ public class ClientProxy extends CommonProxy{
 		ghostRender = new GhostRender(Minecraft.getMinecraft().getRenderManager());
 	}
 	
+	@SubscribeEvent
+	public void registerModel(ModelRegistryEvent e) {
+		try {
+			for(Field field : this.getClass().getFields()) {
+				if(field.get(this) instanceof Item) {
+					Item item = (Item) field.get(this);
+					ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+				} else if(field.get(this) instanceof Block) {
+					Block block = (Block) field.get(this);
+					ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(block.getRegistryName(), "inventory"));
+				}
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 	
 	@Override
 	public void spawnShroomParticle(Entity ent, ShroomParticle particleType) {

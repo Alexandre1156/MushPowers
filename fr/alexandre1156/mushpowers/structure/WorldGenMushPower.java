@@ -82,9 +82,10 @@ public class WorldGenMushPower extends WorldGenerator {
 	}
 	
 	private void generateMushPowerBush(BlockPos pos, World world, BushMush bush) {
-		if (world.isAirBlock(pos) && (!world.provider.hasNoSky() || pos.getY() < world.getHeight() - 1)
+		if (world.isAirBlock(pos) && (!world.provider.hasSkyLight() || pos.getY() < world.getHeight() - 1) 
 				&& bush.canBlockStay(world, pos, bush.getDefaultState()))
 			world.setBlockState(pos, bush.getDefaultState(), 2);
+		//1.12 : Si mush bug, enlever ! avant hasSkyLight()
 	}
 	
 	private boolean isOnSurface(BlockPos pos, World world) {

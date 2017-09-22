@@ -10,9 +10,9 @@ import com.google.common.collect.Maps;
 import fr.alexandre1156.mushpowers.MushUtils;
 import fr.alexandre1156.mushpowers.Reference;
 import fr.alexandre1156.mushpowers.bushs.BushMush;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
 import fr.alexandre1156.mushpowers.items.shrooms.ItemMushPowers;
 import fr.alexandre1156.mushpowers.proxy.CommonProxy;
+import fr.alexandre1156.mushpowers.proxy.CommonProxy.Mushs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -31,7 +31,7 @@ public class MushConfig {
 	public static int damageAbsordPercentShieldshroom;
 	public static byte maxDamageAbsorbShieldshroom;
 	//Cooldown
-	private static EnumMap<MainMushPowers, Short> cooldowns;
+	private static EnumMap<Mushs, Short> cooldowns;
 //	public static short cooldownSquid;
 //	public static short cooldownChicken;
 //	public static short cooldownElectric;
@@ -56,7 +56,7 @@ public class MushConfig {
 	
 	public static void syncConfig(){
 		try {
-			if(cooldowns == null) cooldowns = Maps.newEnumMap(MainMushPowers.class);
+			if(cooldowns == null) cooldowns = Maps.newEnumMap(Mushs.class);
 			if(desactives == null) desactives = Maps.newHashMap();
 			if(config != null) {
 				//General
@@ -67,12 +67,14 @@ public class MushConfig {
 				foodCountPizzashroom = (byte) config.getInt("Pizzashroom:FoodCount", Configuration.CATEGORY_GENERAL, 3, 1, 99, "Number of food you need to eat in order to desactive Lowershroom power");
 				hearthRegenshroom = config.getInt("Regenshroom:HearthRegen", Configuration.CATEGORY_GENERAL, 6, 1, 20, "Number of half-hearth the Regenshroom give");
 				maxDamageAbsorbShieldshroom = (byte) config.getInt("Shieldshroom:DamageAbsord", Configuration.CATEGORY_GENERAL, 10, 1, 127, "Number of half-hearth you need to lose to desactive Shieldshroom");
-				damageAbsordPercentShieldshroom = config.getInt("Shieldshroom:PercentDamagedAbsorb", Configuration.CATEGORY_GENERAL, 25, 1, 99, "Percent of damage taken absorbed");
+				damageAbsordPercentShieldshroom = config.getInt("Shieldshroom:PercentDamagedAbsorb", Configuration.CATEGORY_GENERAL, 25, 1, 100, "Percent of damage taken absorbed");
 				//Cooldown
-				for(MainMushPowers mainMushPowers : MainMushPowers.values())
-					cooldowns.put(mainMushPowers, (short) config.getInt(MushUtils.startStringWithCapital(mainMushPowers.getItemInstance().getRegistryName().getResourcePath()), 
-							"MushCooldown", mainMushPowers.getCooldownDefaultValue(), 10, 32767, 
-							"The "+mainMushPowers.getItemInstance().getRegistryName().getResourcePath()+" cooldown in tick"));
+				for(Mushs mush : Mushs.values()) {
+					if(mush.getItemInstance() != null && mush.isBig())
+						cooldowns.put(mush, (short) config.getInt(MushUtils.startStringWithCapital(mush.getItemInstance().getRegistryName().getResourcePath()), 
+								"MushCooldown", mush.getCooldownDefaultValue(), 10, 32767, 
+								"The "+mush.getItemInstance().getRegistryName().getResourcePath()+" cooldown in tick"));
+				}
 //				cooldownSquid = (short) config.getInt("Squidshroom", "MushCooldown", 6000, 10, 32767, "The Squidshroom cooldown in tick");
 //				cooldownChicken = (short) config.getInt("Chickenshroom", "MushCooldown", 3600, 10, 32767, "The Chicekenshroom cooldown in tick");
 //				cooldownElectric = (short) config.getInt("Eletricshroom", "MushCooldown", 18000, 10, 32767, "The Eletricshroom cooldown in tick");
@@ -112,18 +114,23 @@ public class MushConfig {
 	}
 	
 	public static boolean isMushPowersDesactived(Item item){
+		if(desactives == null)
+			return false;
 		if(item instanceof ItemMushPowers) 
 			return desactives.get(item);
-		else {
+		else if(CommonProxy.getBushs() != null){
 			for(BushMush bushmush : CommonProxy.getBushs()){
 				if(Item.getItemFromBlock(bushmush).equals(item))
 					return desactives.get(bushmush.getMushPowerCorrespondence());
 			}
 			return false;
 		}
+		return false;
 	}
 	
-	public static short getCooldown(MainMushPowers mushpowers) {
+	public static short getCooldown(Mushs mushpowers) {
+		if(cooldowns == null)
+			return -1;
 		return cooldowns.get(mushpowers);
 	}
 	

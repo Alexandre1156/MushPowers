@@ -1,9 +1,10 @@
 package fr.alexandre1156.mushpowers.events;
 
 import fr.alexandre1156.mushpowers.MushPowers;
-import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.capabilities.CapabilityUtils;
+import fr.alexandre1156.mushpowers.capabilities.player.IPlayerMush;
+import fr.alexandre1156.mushpowers.capabilities.player.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.items.shrooms.Chickenshroom;
 import fr.alexandre1156.mushpowers.particle.ShroomParticle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -16,7 +17,7 @@ public class ChickenshroomEvent extends ShroomEvent {
 	
 	@Override
 	protected void onTickPlayer(EntityPlayer p, Phase phase, Side side) {
-		if(p.getCapability(PlayerMushProvider.MUSH_CAP, null).isChicken()){
+		if(p.getCapability(PlayerMushProvider.MUSH_CAP, null).getBoolean(Chickenshroom.IS_CHICKEN)){
 			if(p.motionY < 0.0D && !p.onGround) 
 				p.motionY *= 0.77D;
 			p.motionX *= 0.8D;
@@ -36,8 +37,8 @@ public class ChickenshroomEvent extends ShroomEvent {
 		if(!death){
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
 			IPlayerMush mush2 = pOriginal.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			mush.setChicken(mush2.isChicken());
-			mush.setCooldown(MainMushPowers.CHICKEN, mush2.getCooldown(MainMushPowers.CHICKEN));
+			mush.setBoolean(Chickenshroom.IS_CHICKEN, mush2.getBoolean(Chickenshroom.IS_CHICKEN));
+			mush.setShort(Chickenshroom.CHICKEN_COOLDOWN, mush2.getShort(Chickenshroom.CHICKEN_COOLDOWN));
 		}
 	}
 	
@@ -46,26 +47,26 @@ public class ChickenshroomEvent extends ShroomEvent {
 		if(ent instanceof EntityPlayer && !ent.world.isRemote){
 			EntityPlayer p = (EntityPlayer) ent;
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			if(mush.getCooldown(MainMushPowers.CHICKEN) % 1200 == 0)
-				p.sendStatusMessage(new TextComponentTranslation("chicken.time.left.min", (mush.getCooldown(MainMushPowers.CHICKEN)/1200)), true);
-			else if(mush.getCooldown(MainMushPowers.CHICKEN) == 600 || mush.getCooldown(MainMushPowers.CHICKEN) == 200 || mush.getCooldown(MainMushPowers.CHICKEN) == 180 || mush.getCooldown(MainMushPowers.CHICKEN) == 160 || mush.getCooldown(MainMushPowers.CHICKEN) == 140 || mush.getCooldown(MainMushPowers.CHICKEN) == 120 || mush.getCooldown(MainMushPowers.CHICKEN) == 100 || mush.getCooldown(MainMushPowers.CHICKEN) == 80 || mush.getCooldown(MainMushPowers.CHICKEN) == 60 || mush.getCooldown(MainMushPowers.CHICKEN) == 40 || mush.getCooldown(MainMushPowers.CHICKEN) == 20)
-				p.sendStatusMessage(new TextComponentTranslation("chicken.time.left.sec", (mush.getCooldown(MainMushPowers.CHICKEN)/20)), true);
-			if(mush.getCooldown(MainMushPowers.CHICKEN) <= 0) {
-				mush.setCooldown(MainMushPowers.CHICKEN, (short) 0);
-				mush.setChicken(false);
-				PlayerMushProvider.syncCapabilities(p);
+			if(mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) % 1200 == 0)
+				p.sendStatusMessage(new TextComponentTranslation("chicken.time.left.min", (mush.getShort(Chickenshroom.CHICKEN_COOLDOWN)/1200)), true);
+			else if(mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 600 || mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 200 || mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 180 || mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 160 || mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 140 || mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 120 || mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 100 || mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 80 || mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 60 || mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 40 || mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) == 20)
+				p.sendStatusMessage(new TextComponentTranslation("chicken.time.left.sec", (mush.getShort(Chickenshroom.CHICKEN_COOLDOWN)/20)), true);
+			if(mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) <= 0) {
+				mush.setShort(Chickenshroom.CHICKEN_COOLDOWN, (short) 0);
+				mush.setBoolean(Chickenshroom.IS_CHICKEN, false);
+				CapabilityUtils.syncCapabilities(p);
 				return;
 			}
-			mush.setCooldown(MainMushPowers.CHICKEN, (short) (mush.getCooldown(MainMushPowers.CHICKEN)-1));
+			mush.setShort(Chickenshroom.CHICKEN_COOLDOWN, (short) (mush.getShort(Chickenshroom.CHICKEN_COOLDOWN)-1));
 		} else {
 			IPlayerMush mush = entLiv.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			if(mush.getCooldown(MainMushPowers.CHICKEN) <= 0){
-				System.out.println("CHICKEN SHROOM FINISHED FOR "+entLiv);
-				mush.setCooldown(MainMushPowers.CHICKEN, (short) 0);
-				mush.setChicken(false);
+			if(mush.getShort(Chickenshroom.CHICKEN_COOLDOWN) <= 0){
+				//System.out.println("CHICKEN SHROOM FINISHED FOR "+entLiv);
+				mush.setShort(Chickenshroom.CHICKEN_COOLDOWN, (short) 0);
+				mush.setBoolean(Chickenshroom.IS_CHICKEN, false);
 				return;
 			}
-			mush.setCooldown(MainMushPowers.CHICKEN, (short) (mush.getCooldown(MainMushPowers.CHICKEN)-1));
+			mush.setShort(Chickenshroom.CHICKEN_COOLDOWN, (short) (mush.getShort(Chickenshroom.CHICKEN_COOLDOWN)-1));
 		}
 		if(!(entLiv instanceof EntityPlayer)){
 			if(entLiv.ticksExisted % 20 == 0)

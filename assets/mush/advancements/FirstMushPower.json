@@ -1,0 +1,18 @@
+{
+	"display": {
+		"show_toast": true,
+		"announce_to_chat": false,
+		"icon": {
+			"item": "mush:regenshroom"
+		},
+		"title": "First Mush Power",
+		"description": "Craft a Mush Power",
+		"frame": "task"
+	},
+	"criteria": {
+		"first_shroom_power": {
+			"trigger": "mush:craft_mushpowers"
+		}
+	},
+	"parent": "mush:MushPowersRoot"
+}

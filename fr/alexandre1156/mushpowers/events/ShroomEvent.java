@@ -49,7 +49,7 @@ public abstract class ShroomEvent {
 	protected void onEntityJoinWorld(Entity ent, World world) {}
 	/**With predicate*/
 	protected boolean onLivingEntityFall(Entity ent, EntityLivingBase entLiv, float distance, float damageMultiplier){return false;}
-	/**With predicate*/
+	/**No predicate*/
 	protected float onLivingHurt(EntityLivingBase entLiv, DamageSource source, float amount) {return -1f;}
 	/**With predicate*/
 	protected boolean onLivingDeath(EntityLivingBase entLiv, DamageSource source) {return false;}

@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"group": "mushblock",
+	"pattern": [
+		" G ",
+		"RAR",
+		" B "
+	],
+	"key": {
+		"G": {
+			"item": "minecraft:glass_bottle"
+		},
+		"R": {
+			"item": "minecraft:red_mushroom"
+		},
+		"A": {
+			"item": "minecraft:brewing_stand"
+		},
+		"B": {
+			"item": "minecraft:blaze_rod"
+		}
+	},
+	"result": {
+		"item": "mush:mppi"
+	}
+}

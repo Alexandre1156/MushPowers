@@ -5,9 +5,11 @@ import java.util.List;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 import fr.alexandre1156.mushpowers.MushPowers;
-import fr.alexandre1156.mushpowers.capabilities.RegenProvider;
+import fr.alexandre1156.mushpowers.capabilities.regen.RegenProvider;
 import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.particle.ShroomParticle;
+import fr.alexandre1156.mushpowers.proxy.CommonProxy.Mushs;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -42,21 +44,20 @@ public class Regenshroom extends ItemMushPowers {
 				player.addPotionEffect(new PotionEffect(MobEffects.POISON, duration, level));
 			}
 		}
+		super.onFoodEaten(stack, worldIn, player);
 	}
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
 		if(playerIn.getHealth() >= playerIn.getMaxHealth())
-			return new ActionResult(EnumActionResult.FAIL, itemstack);
+			return new ActionResult<>(EnumActionResult.FAIL, itemstack);
 		else
 			return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-//		System.out.println(isSelected+" "+entityIn+" "+MushPowers.cursedShroomViewers.contains(entityIn.getName())+" "+!entityIn.world.isRemote+" - "+
-//				stack.getCapability(RegenProvider.REGEN_CAP, null).isBad());
 		if(isSelected && 
 				entityIn instanceof EntityPlayer && 
 				MushConfig.playersCanSeeFakeRegenshroom.contains(entityIn.getName()) && 
@@ -66,9 +67,9 @@ public class Regenshroom extends ItemMushPowers {
 	}
 	
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		tooltip.add(ChatFormatting.WHITE+"Regenerates "+MushConfig.hearthRegenshroom+" half-hearts.");
-		super.addInformation(stack, playerIn, tooltip, advanced);
+		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}
 
 	@Override
@@ -83,7 +84,7 @@ public class Regenshroom extends ItemMushPowers {
 			for(int i = 0; i <= 2; i++)
 				MushPowers.instance.proxy.spawnShroomParticle(entLiv, ShroomParticle.HEARTH);
 			return true;
-		} else if(entLiv.getHealth() == entLiv.getMaxHealth()) {
+		} else if(entLiv.getHealth() >= entLiv.getMaxHealth()) {
 			player.sendStatusMessage(new TextComponentTranslation("rodstick.fullhearth.message", new Object[0]), true);
 			return false;
 		}
@@ -103,6 +104,11 @@ public class Regenshroom extends ItemMushPowers {
 	@Override
 	public boolean isEntityLivingCompatible() {
 		return true;
+	}
+
+	@Override
+	protected Mushs getMushType() {
+		return Mushs.REGEN;
 	}
 	
 }

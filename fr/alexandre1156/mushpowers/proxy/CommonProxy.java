@@ -1,5 +1,6 @@
 package fr.alexandre1156.mushpowers.proxy;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,13 +25,16 @@ import fr.alexandre1156.mushpowers.bushs.BlockBushSquid;
 import fr.alexandre1156.mushpowers.bushs.BlockBushZombieAway;
 import fr.alexandre1156.mushpowers.bushs.BushMush;
 import fr.alexandre1156.mushpowers.capabilities.CapabilityHandler;
-import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
-import fr.alexandre1156.mushpowers.capabilities.IRegen;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMush;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMushStorage;
-import fr.alexandre1156.mushpowers.capabilities.RegenCap;
-import fr.alexandre1156.mushpowers.capabilities.RegenStorage;
+import fr.alexandre1156.mushpowers.capabilities.eat.EatMushPowers;
+import fr.alexandre1156.mushpowers.capabilities.eat.EatMushPowersStorage;
+import fr.alexandre1156.mushpowers.capabilities.eat.IEatMushPower;
+import fr.alexandre1156.mushpowers.capabilities.player.IPlayerMush;
+import fr.alexandre1156.mushpowers.capabilities.player.PlayerMush;
+import fr.alexandre1156.mushpowers.capabilities.player.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.capabilities.player.PlayerMushStorage;
+import fr.alexandre1156.mushpowers.capabilities.regen.IRegen;
+import fr.alexandre1156.mushpowers.capabilities.regen.RegenCap;
+import fr.alexandre1156.mushpowers.capabilities.regen.RegenStorage;
 import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.events.ChickenshroomEvent;
 import fr.alexandre1156.mushpowers.events.ElectricshroomEvent;
@@ -64,18 +68,21 @@ import fr.alexandre1156.mushpowers.mppi.BlockMushPowersPowerInjector;
 import fr.alexandre1156.mushpowers.mppi.TileEntityMushPowersPowerInjector;
 import fr.alexandre1156.mushpowers.particle.ShroomParticle;
 import net.minecraft.block.Block;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class CommonProxy {
@@ -110,7 +117,6 @@ public class CommonProxy {
 	public static ItemFood itemFlyshroom;
 	public static ItemFood itemLowershroom;
 	public static ItemFood itemRandomshroom;
-	//NE PAS OUBLIER D'ENRGISTRER L'ITEM DANS COMMONPROXY ET SON RENDER DANS CLIENTPROXY
 	public static EventHandler eventHandler;
 	/**All items in the mod*/
 	protected static ArrayList<Item> itemsMod;
@@ -133,8 +139,10 @@ public class CommonProxy {
 		GameRegistry.registerTileEntity(TileEntityMushPowersPowerInjector.class, Reference.MOD_ID+":mppi");
 		CapabilityManager.INSTANCE.register(IPlayerMush.class, new PlayerMushStorage(), PlayerMush.class);
 		CapabilityManager.INSTANCE.register(IRegen.class, new RegenStorage(), RegenCap.class);
+		CapabilityManager.INSTANCE.register(IEatMushPower.class, new EatMushPowersStorage(), EatMushPowers.class);
 		MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
 		MinecraftForge.EVENT_BUS.register(MushConfig.class);
+		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(eventHandler = new EventHandler());
 		
 		itemMushElexir = new ItemMushroomElixir();
@@ -152,6 +160,8 @@ public class CommonProxy {
 		itemFlyshroom = new Flyshroom();
 		itemLowershroom = new Lowershroom();
 		itemRandomshroom = new Randomshroom();
+		
+		itemShroomRodStick = new ItemShroomRodStick();
 		
 		blockMPPI = new BlockMushPowersPowerInjector();
 		bushSquidshroom = new BlockBushSquid();
@@ -171,7 +181,7 @@ public class CommonProxy {
 
 			@Override
 			public boolean apply(Entity input) {
-				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isSquid() : false;
+				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null).getBoolean(Squidshroom.IS_SQUID) : false;
 			}
 			
 		});
@@ -179,7 +189,7 @@ public class CommonProxy {
 
 			@Override
 			public boolean apply(Entity input) {
-				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isPizzaEaten() : false;
+				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null).getInteger(Pizzashroom.PIZZA_COUNT) > 0 : false;
 			}
 			
 		});
@@ -190,7 +200,8 @@ public class CommonProxy {
 
 			@Override
 			public boolean apply(Entity input) {
-				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isChicken() : false;
+				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null)
+						.getBoolean(Chickenshroom.IS_CHICKEN) : false;
 			}
 			
 		});
@@ -198,7 +209,8 @@ public class CommonProxy {
 
 			@Override
 			public boolean apply(Entity input) {
-				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isGhost() : false;
+				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null)
+						.getBoolean(Ghostshroom.IS_GHOST) : false;
 			}
 			
 		});
@@ -206,7 +218,8 @@ public class CommonProxy {
 
 			@Override
 			public boolean apply(Entity input) {
-				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isElectric() : false;
+				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null)
+						.getBoolean(Electricshroom.IS_ELECTRIC) : false;
 			}
 			
 		});
@@ -214,7 +227,8 @@ public class CommonProxy {
 
 			@Override
 			public boolean apply(Entity input) {
-				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isShieldActive() : false;
+				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null)
+						.getInteger(Shieldshroom.DAMAGE_ABSORB) > 0 : false;
 			}
 			
 		});
@@ -222,7 +236,8 @@ public class CommonProxy {
 
 			@Override
 			public boolean apply(Entity input) {
-				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isFlying() : false;
+				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null)
+						.getBoolean(Flyshroom.IS_FLY) : false;
 			}
 			
 		});
@@ -230,11 +245,11 @@ public class CommonProxy {
 
 			@Override
 			public boolean apply(Entity input) {
-				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null).isRepairCostLower() : false;
+				return input instanceof EntityLivingBase ? ((EntityLivingBase) input).getCapability(PlayerMushProvider.MUSH_CAP, null)
+						.getInteger(Lowershroom.LOWER_REPAIR) > 0 : false;
 			}
 			
 		});
-		this.register();
 	}
 	
 	public void init(FMLInitializationEvent e){
@@ -245,62 +260,50 @@ public class CommonProxy {
 		
 	}
 	
-	public void register(){
-		this.registerBlock(blockMPPI);
-		this.registerBlock(bushSquidshroom);
-		this.registerBlock(bushChickenshroom);
-		this.registerBlock(bushCursedshroom);
-		this.registerBlock(bushFlyshroom);
-		this.registerBlock(bushGhostshroom);
-		this.registerBlock(bushElectricshroom);
-		this.registerBlock(bushHostileshroom);
-		this.registerBlock(bushLowershroom);
-		this.registerBlock(bushPizzashroom);
-		this.registerBlock(bushRegenshroom);
-		this.registerBlock(bushShieldshroom);
-		this.registerBlock(bushZombieawayShroom);
-		this.registerBlock(bushRandomshroom);
-		this.registerItem(itemMushElexir);
-		this.registerItem(itemRegenshroom);
-		this.registerItem(itemSquidshroom);
-		//this.registerItem(itemThorshroom);
-		this.registerItem(itemGhostshroom);
-		this.registerItem(itemPizzashroom);
-		this.registerItem(itemZombieawayShroom);
-		this.registerItem(itemHostileshroom);
-		this.registerItem(itemChickenshroom);
-		this.registerItem(itemElectricshroom);
-		this.registerItem(itemCursedshroom);
-		this.registerItem(itemShieldshroom);
-		this.registerItem(itemFlyshroom);
-		this.registerItem(itemLowershroom);
-		this.registerItem(itemRandomshroom);
-		
-		itemShroomRodStick = new ItemShroomRodStick();
-		this.registerItem(itemShroomRodStick);
-	}
-	
-	private void registerBlock(Block block){
-		GameRegistry.register(block);
-		Item itemBlock = new ItemBlock(block){
-			@Override
-			public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-				if(MushConfig.isMushPowersDesactived(this))
-					tooltip.add(ChatFormatting.RED+"THIS SHROOM IS DESACTIVED");
+	@SubscribeEvent
+	public void registerItem(RegistryEvent.Register<Item> e) {
+		try {
+			for(Field field : this.getClass().getFields()) {
+				if(field.get(this) instanceof Item) {
+					Item item = (Item) field.get(this);
+					e.getRegistry().register(item);
+					this.itemsMod.add(item);
+					if(item instanceof ItemMushPowers)
+						this.mushPowersItems.add((ItemMushPowers) item);
+				} else if(field.get(this) instanceof Block) {
+					Block block = (Block) field.get(this);
+					ItemBlock itemBlock = new ItemBlock(block) {
+						@Override
+						public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+							if(MushConfig.isMushPowersDesactived(this))
+								tooltip.add(ChatFormatting.RED+"THIS SHROOM IS DESACTIVED");
+							super.addInformation(stack, worldIn, tooltip, flagIn);
+						}
+					};
+					itemBlock.setRegistryName(block.getRegistryName());
+					e.getRegistry().register(itemBlock);
+					this.itemsMod.add(itemBlock);
+				}
 			}
-		};
-		itemBlock.setRegistryName(block.getRegistryName());
-		GameRegistry.register(itemBlock);
-		this.itemsMod.add(itemBlock);
-		if(block instanceof BushMush)
-			this.bushPowers.add((BushMush) block);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
-	private void registerItem(Item item){
-		GameRegistry.register(item);
-		this.itemsMod.add(item);
-		if(item instanceof ItemMushPowers)
-			this.mushPowersItems.add((ItemMushPowers) item);
+	@SubscribeEvent
+	public void registerBlock(RegistryEvent.Register<Block> e) {
+		try {
+			for(Field field : this.getClass().getFields()) {
+				if(field.get(this) instanceof Block) {
+					Block block = (Block) field.get(this);
+					e.getRegistry().register(block);
+					if(block instanceof BushMush)
+						this.bushPowers.add((BushMush) block);
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	public static EventHandler getEventHandler() {
@@ -345,6 +348,73 @@ public class CommonProxy {
 	
 	public static ArrayList<BushMush> getBushs(){
 		return bushPowers;
+	}
+	
+	public enum Mushs {
+		CHICKEN("chicken", true, (ItemMushPowers) CommonProxy.itemChickenshroom, (short) 3600), 
+		CURSED("cursed", (ItemMushPowers) CommonProxy.itemCursedshroom), 
+		ELECTRIC("electric", true, (ItemMushPowers) CommonProxy.itemElectricshroom, (short) 18000), 
+		FLY("fly", true, (ItemMushPowers) CommonProxy.itemFlyshroom, (short) 1200), 
+		GHOST("ghost", true, (ItemMushPowers) CommonProxy.itemGhostshroom, (short) 2700), 
+		HOSTILE("hostile", true, (ItemMushPowers) CommonProxy.itemHostileshroom, (short) 6000), 
+		LOWER("lower", (ItemMushPowers) CommonProxy.itemLowershroom), 
+		PIZZA("pizza", (ItemMushPowers) CommonProxy.itemPizzashroom), 
+		RANDOM("random", (ItemMushPowers) CommonProxy.itemRandomshroom), 
+		REGEN("regen", (ItemMushPowers) CommonProxy.itemRegenshroom), 
+		SHIELD("shield", (ItemMushPowers) CommonProxy.itemShieldshroom), 
+		SQUID("squid", true, (ItemMushPowers) CommonProxy.itemSquidshroom, (short) 6000), 
+		//THOR("thor", (ItemMushPowers) CommonProxy.itemThorshroom),
+		ZOMBIEAWAY("zombieaway", true, (ItemMushPowers) CommonProxy.itemZombieawayShroom, (short) 6000);
+		
+		private String id;
+		private boolean big;
+		private ItemMushPowers powerInstance;
+		private short timeLeft, defaultTimeLeft;
+		
+		private Mushs(String name, ItemMushPowers power) {
+			this(name, false, power, (short) 0);
+		}
+		
+		private Mushs(String name, boolean isBig, ItemMushPowers power, short defaultTimeLeftValue) {
+			this.id = name;
+			this.big = isBig;
+			this.powerInstance = power;
+			this.timeLeft = 0;
+			this.defaultTimeLeft = defaultTimeLeftValue;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		
+		public boolean isBig() {
+			return big;
+		}
+		
+		public void setTimeLeft(short timeLeft){
+			this.timeLeft = timeLeft;
+		}
+		
+		public short getTimeLeft(){
+			return this.timeLeft;
+		}
+		
+		public ItemMushPowers getItemInstance() {
+			return powerInstance;
+		}
+		
+		public short getCooldownDefaultValue() {
+			return defaultTimeLeft;
+		}
+		
+		public static Mushs getMushsByID(String id) {
+			for(Mushs mush : values()) {
+				if(mush.getId().equals(id))
+					return mush;
+			}
+			return null;
+		}
+		
 	}
 	
 	public void spawnShroomParticle(Entity ent, ShroomParticle particleType){}

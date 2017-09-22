@@ -92,12 +92,12 @@ public class GuiConfigMushPowers extends GuiConfig {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		RenderHelper.disableStandardItemLighting();
-		if(this.fontRendererObj.getStringWidth(this.note) > this.width) {
+		if(this.fontRenderer.getStringWidth(this.note) > this.width) {
 			String text2[] = this.seperate(this.note);
-			this.drawCenteredString(fontRendererObj, text2[0], this.width / 2, 38 + (this.buttonList.size()-1) * 20, Color.white.getRGB());
-			this.drawCenteredString(fontRendererObj, text2[1], this.width / 2, 38 + (this.buttonList.size()-1) * 20 + 10, Color.white.getRGB());
+			this.drawCenteredString(fontRenderer, text2[0], this.width / 2, 38 + (this.buttonList.size()-1) * 20, Color.white.getRGB());
+			this.drawCenteredString(fontRenderer, text2[1], this.width / 2, 38 + (this.buttonList.size()-1) * 20 + 10, Color.white.getRGB());
 		} else
-			this.drawCenteredString(fontRendererObj, this.note, this.width / 2, 38 + (this.buttonList.size()-1) * 20, Color.white.getRGB());
+			this.drawCenteredString(fontRenderer, this.note, this.width / 2, 38 + (this.buttonList.size()-1) * 20, Color.white.getRGB());
 		RenderHelper.enableStandardItemLighting();
 	}
 	
@@ -110,7 +110,7 @@ public class GuiConfigMushPowers extends GuiConfig {
 		boolean switchToNextLine = false;
 		int count = 0;
 		for(char c : text.toCharArray()){
-			widthLimit += this.fontRendererObj.getCharWidth(c);
+			widthLimit += this.fontRenderer.getCharWidth(c);
 			count++;
 			if(widthLimit > this.width) {
 				switchToNextLine = true;

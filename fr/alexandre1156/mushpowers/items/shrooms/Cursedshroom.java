@@ -6,11 +6,13 @@ import org.lwjgl.input.Keyboard;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 
-import fr.alexandre1156.mushpowers.capabilities.RegenProvider;
+import fr.alexandre1156.mushpowers.capabilities.regen.RegenProvider;
 import fr.alexandre1156.mushpowers.config.MushConfig;
 import fr.alexandre1156.mushpowers.particle.ShroomParticle;
 import fr.alexandre1156.mushpowers.proxy.CommonProxy;
+import fr.alexandre1156.mushpowers.proxy.CommonProxy.Mushs;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -36,26 +38,27 @@ public class Cursedshroom extends ItemMushPowers {
 			player.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, duration, level));
 			player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, duration, level));
 			player.addPotionEffect(new PotionEffect(MobEffects.POISON, duration, level));
+			super.onFoodEaten(stack, worldIn, player);
 		}
 	}
 	
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		tooltip.add(ChatFormatting.WHITE+"Adds 3 negatives effects with random amplifier and duration when eat.\nShift + Left Click to transform to a Bad Regenshroom.");
-		super.addInformation(stack, playerIn, tooltip, advanced);
+		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}
 	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		if(MushConfig.isMushPowersDesactived(this))
-			return new ActionResult(EnumActionResult.FAIL, playerIn.getHeldItem(handIn));
+			return new ActionResult<>(EnumActionResult.FAIL, playerIn.getHeldItem(handIn));
 		if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())){
 			ItemStack itemstack = playerIn.getHeldItem(handIn);
 			ItemStack regenshroom = new ItemStack(CommonProxy.itemRegenshroom, itemstack.getCount());
 			regenshroom.getCapability(RegenProvider.REGEN_CAP, null).setBad(true);
 			//((Regenshroom) regenshroom.getItem()).setBad();
 			playerIn.setHeldItem(handIn, regenshroom);
-			return new ActionResult(EnumActionResult.FAIL, itemstack);
+			return new ActionResult<>(EnumActionResult.FAIL, itemstack);
 		} else
 			return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
@@ -77,6 +80,11 @@ public class Cursedshroom extends ItemMushPowers {
 	@Override
 	public boolean isEntityLivingCompatible() {
 		return false;
+	}
+
+	@Override
+	protected Mushs getMushType() {
+		return Mushs.CURSED;
 	}
 	
 	

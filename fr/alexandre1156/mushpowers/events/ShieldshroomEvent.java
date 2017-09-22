@@ -1,9 +1,10 @@
 package fr.alexandre1156.mushpowers.events;
 
 import fr.alexandre1156.mushpowers.MushPowers;
-import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.capabilities.player.IPlayerMush;
+import fr.alexandre1156.mushpowers.capabilities.player.PlayerMushProvider;
 import fr.alexandre1156.mushpowers.config.MushConfig;
+import fr.alexandre1156.mushpowers.items.shrooms.Shieldshroom;
 import fr.alexandre1156.mushpowers.particle.ShroomParticle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,25 +19,29 @@ public class ShieldshroomEvent extends ShroomEvent {
 		if(entLiv instanceof EntityPlayer){
 			EntityPlayer p = (EntityPlayer) entLiv;
 			IPlayerMush mush = entLiv.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			float shieldTaken = amount / (100 / MushConfig.damageAbsordPercentShieldshroom);
-			if(mush.getShieldDamage()-shieldTaken < 0){
-				shieldTaken = mush.getShieldDamage();
-				mush.setShieldDamageAbsorb(0f);
-			} else
-				mush.setShieldDamageAbsorb(mush.getShieldDamage()-shieldTaken);
-			p.sendStatusMessage(new TextComponentTranslation("shieldshroom.damagetaken.message", shieldTaken), true);
-			return (amount - shieldTaken);
+			if(mush.getInteger(Shieldshroom.DAMAGE_ABSORB) > 0) {
+				float shieldTaken = amount / (100 / MushConfig.damageAbsordPercentShieldshroom);
+				if(mush.getInteger(Shieldshroom.DAMAGE_ABSORB)-shieldTaken < 0){
+					shieldTaken = mush.getInteger(Shieldshroom.DAMAGE_ABSORB);
+					mush.setInteger(Shieldshroom.DAMAGE_ABSORB, 0);
+				} else
+					mush.setInteger(Shieldshroom.DAMAGE_ABSORB, (int) (mush.getInteger(Shieldshroom.DAMAGE_ABSORB)-shieldTaken));
+				p.sendStatusMessage(new TextComponentTranslation("shieldshroom.damagetaken.message", shieldTaken), true);
+				return (amount - shieldTaken);
+			}
 		} else {
 			IPlayerMush mush = entLiv.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			float shieldTaken = amount / (100 / MushConfig.damageAbsordPercentShieldshroom);
-			if(mush.getShieldDamage()-shieldTaken < 0){
-				shieldTaken = mush.getShieldDamage();
-				mush.setShieldDamageAbsorb(0f);
-			} else
-				mush.setShieldDamageAbsorb(mush.getShieldDamage()-shieldTaken);
-			return (amount - shieldTaken);
+			if(mush.getInteger(Shieldshroom.DAMAGE_ABSORB) > 0) {
+				float shieldTaken = amount / (100 / MushConfig.damageAbsordPercentShieldshroom);
+				if(mush.getInteger(Shieldshroom.DAMAGE_ABSORB)-shieldTaken < 0){
+					shieldTaken = mush.getInteger(Shieldshroom.DAMAGE_ABSORB);
+					mush.setInteger(Shieldshroom.DAMAGE_ABSORB, 0);
+				} else
+					mush.setInteger(Shieldshroom.DAMAGE_ABSORB, (int) (mush.getInteger(Shieldshroom.DAMAGE_ABSORB)-shieldTaken));
+				return (amount - shieldTaken);
+			}
 		}
-		//return super.onLivingHurt(entLiv, source, amount);
+		return super.onLivingHurt(entLiv, source, amount);
 	}
 	
 	@Override
@@ -50,7 +55,7 @@ public class ShieldshroomEvent extends ShroomEvent {
 		if(!death){
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
 			IPlayerMush mush2 = pOriginal.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			mush.setShieldDamageAbsorb(mush2.getShieldDamage());
+			mush.setInteger(Shieldshroom.DAMAGE_ABSORB, mush2.getInteger(Shieldshroom.DAMAGE_ABSORB));
 		}
 	}
 	

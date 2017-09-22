@@ -3,9 +3,10 @@ package fr.alexandre1156.mushpowers.events;
 import java.util.Iterator;
 
 import fr.alexandre1156.mushpowers.EntityAINearestAttackablePlayerMush;
-import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMush.MainMushPowers;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.capabilities.CapabilityUtils;
+import fr.alexandre1156.mushpowers.capabilities.player.IPlayerMush;
+import fr.alexandre1156.mushpowers.capabilities.player.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.items.shrooms.Hostileshroom;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -31,7 +32,7 @@ public class HostileshroomEvent extends ShroomEvent {
 			while(iter.hasNext()){
 				EntityAITaskEntry entry = iter.next();
 				if(entry.action instanceof EntityAINearestAttackableTarget){
-					Class target = ObfuscationReflectionHelper.getPrivateValue(EntityAINearestAttackableTarget.class, (EntityAINearestAttackableTarget) entry.action, 0);
+					Class<EntityLivingBase> target = ObfuscationReflectionHelper.getPrivateValue(EntityAINearestAttackableTarget.class, (EntityAINearestAttackableTarget) entry.action, 0);
 					if(target.isAssignableFrom(EntityPlayer.class)){
 						entryToDelete = entry.action;
 						break;
@@ -50,18 +51,19 @@ public class HostileshroomEvent extends ShroomEvent {
 		if(ent instanceof EntityPlayer && !ent.world.isRemote){
 			EntityPlayer p = (EntityPlayer) ent;
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			if(mush.isHostile()){
-				if(mush.getCooldown(MainMushPowers.HOSTILE) % 1200 == 0)
-					p.sendStatusMessage(new TextComponentTranslation("hostile.time.left.min", (mush.getCooldown(MainMushPowers.HOSTILE)/1200)), true);
-				else if(mush.getCooldown(MainMushPowers.HOSTILE) == 600 || mush.getCooldown(MainMushPowers.HOSTILE) == 200 || mush.getCooldown(MainMushPowers.HOSTILE) == 180 || mush.getCooldown(MainMushPowers.HOSTILE) == 160 || mush.getCooldown(MainMushPowers.HOSTILE) == 140 || mush.getCooldown(MainMushPowers.HOSTILE) == 120 || mush.getCooldown(MainMushPowers.HOSTILE) == 100 || mush.getCooldown(MainMushPowers.HOSTILE) == 80 || mush.getCooldown(MainMushPowers.HOSTILE) == 60 || mush.getCooldown(MainMushPowers.HOSTILE) == 40 || mush.getCooldown(MainMushPowers.HOSTILE) == 20)
-					p.sendStatusMessage(new TextComponentTranslation("hostile.time.left.sec", (mush.getCooldown(MainMushPowers.HOSTILE)/20)), true);
-				if(mush.getCooldown(MainMushPowers.HOSTILE) <= 0) {
-					mush.setCooldown(MainMushPowers.HOSTILE, (short) 0);
-					mush.setHostile(false);
-					PlayerMushProvider.syncCapabilities(p);
+			if(mush.getBoolean(Hostileshroom.IS_HOSTILE)){
+				if(mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) % 1200 == 0)
+					p.sendStatusMessage(new TextComponentTranslation("hostile.time.left.min", (mush.getShort(Hostileshroom.HOSTILE_COOLDOWN)/1200)), true);
+				else if(mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 600 || mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 200 ||
+						mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 180 || mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 160 || mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 140 || mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 120 || mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 100 || mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 80 || mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 60 || mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 40 || mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) == 20)
+					p.sendStatusMessage(new TextComponentTranslation("hostile.time.left.sec", (mush.getShort(Hostileshroom.HOSTILE_COOLDOWN)/20)), true);
+				if(mush.getShort(Hostileshroom.HOSTILE_COOLDOWN) <= 0) {
+					mush.setShort(Hostileshroom.HOSTILE_COOLDOWN, (short) 0);
+					mush.setBoolean(Hostileshroom.IS_HOSTILE, false);
+					CapabilityUtils.syncCapabilities(p);
 					return;
 				}
-				mush.setCooldown(MainMushPowers.HOSTILE, (short) (mush.getCooldown(MainMushPowers.HOSTILE)-1));
+				mush.setShort(Hostileshroom.HOSTILE_COOLDOWN, (short) (mush.getShort(Hostileshroom.HOSTILE_COOLDOWN)-1));
 			}
 		}
 	}
@@ -71,8 +73,8 @@ public class HostileshroomEvent extends ShroomEvent {
 		if(!death){
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
 			IPlayerMush mush2 = pOriginal.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			mush.setHostile(mush2.isHostile());
-			mush.setCooldown(MainMushPowers.HOSTILE, mush2.getCooldown(MainMushPowers.HOSTILE));
+			mush.setBoolean(Hostileshroom.IS_HOSTILE, mush2.getBoolean(Hostileshroom.IS_HOSTILE));
+			mush.setShort(Hostileshroom.HOSTILE_COOLDOWN, mush2.getShort(Hostileshroom.HOSTILE_COOLDOWN));
 		}
 	}
 	

@@ -37,9 +37,9 @@ public class GuiMushPowersPowerInjector extends GuiContainer {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		String name = I18n.format("container.mppi", new Object[0]);
-		this.fontRendererObj.drawString(name, this.xSize / 2 - this.fontRendererObj.getStringWidth(name) / 2, 6,
+		this.fontRenderer.drawString(name, this.xSize / 2 - this.fontRenderer.getStringWidth(name) / 2, 6,
 				4210752);
-		this.fontRendererObj.drawString(this.playerInv.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2,
+		this.fontRenderer.drawString(this.playerInv.getDisplayName().getUnformattedText(), 8, this.ySize - 96 + 2,
 				4210752);
 		int i = (this.width - this.xSize) / 2;
 		int j = (this.height - this.ySize) / 2;
@@ -61,7 +61,7 @@ public class GuiMushPowersPowerInjector extends GuiContainer {
 			this.drawHoveringText(Lists.newArrayList(this.te.getCooldownUp()*100/200+"%"), 69, 33);
 		if(this.te.isDesactivedItem()){
 			RenderHelper.disableStandardItemLighting();
-			this.drawString(fontRendererObj, "DESACTIVED SHROOM", 20, 40, Color.red.getRGB());
+			this.drawString(fontRenderer, "DESACTIVED SHROOM", 20, 40, Color.red.getRGB());
 			RenderHelper.enableStandardItemLighting();
 		}
 	}

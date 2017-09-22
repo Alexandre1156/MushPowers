@@ -5,6 +5,8 @@ import java.util.List;
 import com.mojang.realmsclient.gui.ChatFormatting;
 
 import fr.alexandre1156.mushpowers.particle.ShroomParticle;
+import fr.alexandre1156.mushpowers.proxy.CommonProxy.Mushs;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -23,12 +25,13 @@ public class Randomshroom extends ItemMushPowers {
 	protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
 		if(!worldIn.isRemote)
 			player.addPotionEffect(new PotionEffect(Potion.getPotionById(this.itemRand.nextInt(27)+1), (this.itemRand.nextInt(30)+1)*20, this.itemRand.nextInt(3), false, true));
+		super.onFoodEaten(stack, worldIn, player);
 	}
 	
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		tooltip.add(ChatFormatting.WHITE+"Give a random potion effect with random duration and random amplifier.");
-		super.addInformation(stack, playerIn, tooltip, advanced);
+		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}
 
 	@Override
@@ -51,6 +54,11 @@ public class Randomshroom extends ItemMushPowers {
 	@Override
 	public boolean isEntityLivingCompatible() {
 		return true;
+	}
+
+	@Override
+	protected Mushs getMushType() {
+		return Mushs.RANDOM;
 	}
 
 }

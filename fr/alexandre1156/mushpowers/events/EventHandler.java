@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
-import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.capabilities.CapabilityUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -34,7 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class EventHandler {
 
 	private ArrayList<ShroomEvent> shrooms;
-	private ArrayList<Predicate> predicates;
+	private ArrayList<Predicate<Entity>> predicates;
 	
 	public EventHandler() {this.shrooms = Lists.newArrayList(); this.predicates = Lists.newArrayList();}
 	
@@ -42,10 +43,8 @@ public class EventHandler {
 	public void playerClone(PlayerEvent.Clone e){
 		for(int i = 0; i < shrooms.size(); i++) 
 			shrooms.get(i).onPlayerCloned(e.getEntityPlayer(), e.getOriginal(), e.isWasDeath());
-		if (e.isWasDeath()) {
-			PlayerMushProvider.resetPlayer(e.getEntityPlayer(), false);
-			PlayerMushProvider.syncCapabilities(e.getEntityPlayer());
-		}
+		if (e.isWasDeath())
+			CapabilityUtils.resetPlayer(e.getEntityPlayer(), false);
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -153,10 +152,10 @@ public class EventHandler {
 	@SubscribeEvent
 	public void livingHurt(LivingHurtEvent e){
 		for(int i = 0; i < shrooms.size(); i++) {
-			if(predicates.get(i).apply(e.getEntityLiving())) {
-				float newAmount = shrooms.get(i).onLivingHurt(e.getEntityLiving(), e.getSource(), e.getAmount());
-				if(newAmount >= 0) e.setAmount(newAmount);
-			}
+			//if(predicates.get(i).apply(e.getEntityLiving())) {
+			float newAmount = shrooms.get(i).onLivingHurt(e.getEntityLiving(), e.getSource(), e.getAmount());
+			if(newAmount >= 0) e.setAmount(newAmount);
+			//}
 		}
 	}
 	
@@ -181,8 +180,8 @@ public class EventHandler {
 	@SubscribeEvent
 	public void clientChatReceived(ClientChatReceivedEvent e){
 		for(int i = 0; i < shrooms.size(); i++){
-			ITextComponent message = shrooms.get(i).onClientChatReceived(e.getMessage(), e.getType());
-			if(message != null) e.setMessage(message);
+//			ITextComponent message = shrooms.get(i).onClientChatReceived(e.getMessage(), e.getType());
+//			if(message != null) e.setMessage(message);
 		}
 	}
 	
@@ -231,7 +230,7 @@ public class EventHandler {
 //			shrooms.get(i).onPlayerOpenContainer(e.getContainer(), e.getEntityPlayer());
 //	}
 	
-	public void addShroomEvent(ShroomEvent instance, Predicate predicate){
+	public void addShroomEvent(ShroomEvent instance, Predicate<Entity> predicate){
 		this.shrooms.add(instance);
 		this.predicates.add(predicate);
 	}

@@ -28,7 +28,7 @@ public class SquidRender extends RenderPlayer {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(AbstractClientPlayer entity) {
+	public ResourceLocation getEntityTexture(AbstractClientPlayer entity) {
 		return SQUID_TEXTURES;
 	}
 

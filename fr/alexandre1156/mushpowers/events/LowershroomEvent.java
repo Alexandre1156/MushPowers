@@ -1,8 +1,10 @@
 package fr.alexandre1156.mushpowers.events;
 
-import fr.alexandre1156.mushpowers.capabilities.IPlayerMush;
-import fr.alexandre1156.mushpowers.capabilities.PlayerMushProvider;
+import fr.alexandre1156.mushpowers.capabilities.CapabilityUtils;
+import fr.alexandre1156.mushpowers.capabilities.player.IPlayerMush;
+import fr.alexandre1156.mushpowers.capabilities.player.PlayerMushProvider;
 import fr.alexandre1156.mushpowers.config.MushConfig;
+import fr.alexandre1156.mushpowers.items.shrooms.Lowershroom;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,13 +23,14 @@ public class LowershroomEvent extends ShroomEvent {
 	private int xp;
 	private int lastXP;
 	private boolean xpChange;
+	public static final double HUNDRED = 100;
 
 	@Override
 	protected void onPlayerCloned(EntityPlayer p, EntityPlayer pOriginal, boolean death) {
 		if(!death){
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
 			IPlayerMush mush2 = pOriginal.getCapability(PlayerMushProvider.MUSH_CAP, null);
-			mush.setLowerRepairCost(mush2.getRepairCostLeft());
+			mush.setInteger(Lowershroom.LOWER_REPAIR, mush2.getInteger(Lowershroom.LOWER_REPAIR));
 		}
 	}
 	
@@ -38,24 +41,18 @@ public class LowershroomEvent extends ShroomEvent {
 			IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
 			if(p.openContainer instanceof ContainerRepair) {
 				ContainerRepair container = (ContainerRepair) p.openContainer;
-				//if(mush.isRepairCostLower()){
-					if(container.maximumCost != 0 && !originalCost && this.lastMaximumCost == 0){
-						this.lastMaximumCost = container.maximumCost;
-						this.originalCost = true;
-					} else if(container.maximumCost == 0 && originalCost && this.lastMaximumCost > 0) {
-						this.originalCost = false;
-						this.lastMaximumCost = 0;
-					} if(this.originalCost){
-						container.maximumCost = (int) (this.lastMaximumCost * ((100 - MushConfig.percentLowershroom) / 100));
-						if(container.maximumCost <= 0)
-							container.maximumCost = 1;
-					}
-				//}
+				if(container.maximumCost != 0 && !originalCost && this.lastMaximumCost == 0){
+					this.lastMaximumCost = container.maximumCost;
+					this.originalCost = true;
+				} else if(container.maximumCost == 0 && originalCost && this.lastMaximumCost > 0) {
+					this.originalCost = false;
+					this.lastMaximumCost = 0;
+				} if(this.originalCost){
+					container.maximumCost = (int) (this.lastMaximumCost * ((100 - MushConfig.percentLowershroom) / this.HUNDRED));
+					if(container.maximumCost <= 0)
+						container.maximumCost = 1;
+				}
 			}
-//			if(p.openContainer instanceof ContainerEnchantment)
-//				this.player = p;
-//			else
-//				this.player = null;
 			if(p.openContainer instanceof ContainerEnchantment) {
 				if(xp != p.experienceLevel || xp == 0) {
 					lastXP = xp;
@@ -69,7 +66,7 @@ public class LowershroomEvent extends ShroomEvent {
 					for(int i = 0; i < container.enchantLevels.length; i++){
 						if(container.enchantLevels[i] > 0){
 							if(!this.originalLevel) {
-								this.lastLevel[i] = (int) (container.enchantLevels[i] * ((100 - MushConfig.percentLowershroom) / 100));
+								this.lastLevel[i] = (int) (container.enchantLevels[i] * ((100 - MushConfig.percentLowershroom) / this.HUNDRED));
 								if(this.lastLevel[i] <= 0)
 									this.lastLevel[i] = 1;
 							}
@@ -84,8 +81,8 @@ public class LowershroomEvent extends ShroomEvent {
 						this.needLaunchIsServerSide = true;
 					else {
 						this.needLaunchIsServerSide = false;
-						mush.setLowerRepairCost((byte) (xpChange ? (mush.getRepairCostLeft() - ((lastXP - xp) * 2)) : mush.getRepairCostLeft() - (lastXP * 2)));
-						PlayerMushProvider.syncCapabilities(p);
+						mush.setInteger(Lowershroom.LOWER_REPAIR, (byte) (xpChange ? (mush.getInteger(Lowershroom.LOWER_REPAIR) - ((lastXP - xp) * 2)) : mush.getInteger(Lowershroom.LOWER_REPAIR) - (lastXP * 2)));
+						CapabilityUtils.syncCapabilities(p);
 					}
 					this.originalLevel = false;
 					this.lastLevel[0] = 0;
@@ -103,8 +100,8 @@ public class LowershroomEvent extends ShroomEvent {
 			}
 			if(this.needLaunchIsServerSide && !p.world.isRemote){
 				this.needLaunchIsServerSide = false;
-				mush.setLowerRepairCost((byte) (xpChange ? (mush.getRepairCostLeft() - ((lastXP - xp) * 2)) : mush.getRepairCostLeft() - (lastXP * 2)));
-				PlayerMushProvider.syncCapabilities(p);
+				mush.setInteger(Lowershroom.LOWER_REPAIR, (byte) (xpChange ? (mush.getInteger(Lowershroom.LOWER_REPAIR) - ((lastXP - xp) * 2)) : mush.getInteger(Lowershroom.LOWER_REPAIR) - (lastXP * 2)));
+				CapabilityUtils.syncCapabilities(p);
 			}
 		}
 	}
@@ -113,8 +110,8 @@ public class LowershroomEvent extends ShroomEvent {
 	public void onAnvilRepair(float breakChance, EntityPlayer p, ItemStack firstInput, ItemStack secondInput, ItemStack output) {
 		IPlayerMush mush = p.getCapability(PlayerMushProvider.MUSH_CAP, null);
 		if(p.openContainer instanceof ContainerRepair){
-			mush.setLowerRepairCost((byte) (mush.getRepairCostLeft()-((ContainerRepair) p.openContainer).maximumCost));
-			PlayerMushProvider.syncCapabilities(p);
+			mush.setInteger(Lowershroom.LOWER_REPAIR, (byte) (mush.getInteger(Lowershroom.LOWER_REPAIR)-((ContainerRepair) p.openContainer).maximumCost));
+			CapabilityUtils.syncCapabilities(p);
 		}
 	}
 

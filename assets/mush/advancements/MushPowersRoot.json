@@ -1,0 +1,22 @@
+{
+    "display": {
+        "background": "minecraft:textures/blocks/mushroom_block_skin_red.png",
+		"title": {"text":"MushPowers","bold":true,"color":"red"},
+        "hidden": false,
+        "show_toast": true,
+        "announce_to_chat": false,
+        "icon": {
+            "item": "mush:mppi"
+        },
+        "description": "The beggining of shrooms power",
+        "frame": "goal"
+    },
+    "criteria": {
+        "craftbase": {
+            "trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "mush:mppi"
+			}
+        }
+    }
+}

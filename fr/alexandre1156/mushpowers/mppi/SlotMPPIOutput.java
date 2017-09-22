@@ -1,7 +1,9 @@
 package fr.alexandre1156.mushpowers.mppi;
 
+import fr.alexandre1156.mushpowers.MushPowers;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.math.MathHelper;
@@ -32,6 +34,8 @@ public class SlotMPPIOutput extends SlotItemHandler {
 	}
 
 	public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
+		if(thePlayer instanceof EntityPlayerMP)
+			MushPowers.CRAFT_MUSHPOWERS.trigger((EntityPlayerMP) player, stack, ((EntityPlayerMP) thePlayer).openContainer);
 		this.onCrafting(stack);
 		super.onTake(thePlayer, stack);
 		return stack;
